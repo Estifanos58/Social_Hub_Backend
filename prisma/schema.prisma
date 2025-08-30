@@ -1,0 +1,195 @@
+// ============================================
+// Prisma & Datasource
+// ============================================
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// Enums
+// ============================================
+enum ReactionType {
+  LIKE
+  LOVE
+  HAHA
+  WOW
+  SAD
+  ANGRY
+}
+
+enum ChatroomRole {
+  OWNER
+  ADMIN
+  MODERATOR
+  MEMBER
+}
+
+// ============================================
+// User & Auth
+// ============================================
+model User {
+  id           String          @id @default(uuid())
+  fullname     String
+  username     String?         @unique @db.VarChar(30) // Optional handle for mentions/search
+  avatarUrl    String?
+  email        String          @unique
+  lastSeenAt   DateTime?                      // Online presence & sorting recently active users
+  isActive     Boolean         @default(true)   // Soft-ban / deactivate without deleting
+
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  deletedAt    DateTime?                  // Soft delete support
+
+  // Relations
+  credential   Credential?    @relation("UserCredential")
+  posts        Post[]         @relation("UserPosts")
+  comments     Comment[]      @relation("UserComments")
+  reactions    Reaction[]     @relation("UserReactions")
+  messages     Message[]     @relation("UserMessages")
+  memberships  ChatroomUser[]                          // Explicit many-to-many with metadata
+  chatroomsCreated Chatroom[] @relation("UserChatroomsCreated")
+
+  @@index([lastSeenAt, isActive, deletedAt])
+}
+
+model Credential {
+  id               String   @id @default(uuid())
+  passwordHash     String?                           // Hashed password (nullable if SSO)
+  twoFactorEnabled Boolean  @default(false)
+  twoFactorSecret  String?
+  refreshToken     String?                           // For JWT refresh flows
+
+  userId           String   @unique
+  user             User     @relation("UserCredential", fields: [userId], references: [id], onDelete: Cascade)
+
+  googleId         String?  @unique
+  facebookId       String?  @unique
+  githubId         String?  @unique
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+// ============================================
+// Social Feed
+// ============================================
+model Post {
+  id          String       @id @default(uuid())
+  content     String
+  imageUrl    String?
+
+  createdAt   DateTime     @default(now()) 
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?    
+
+  createdById String
+  createdBy   User         @relation("UserPosts", fields: [createdById], references: [id], onDelete: Cascade)
+
+  comments    Comment[]    @relation("PostComments")
+  reactions   Reaction[]   @relation("PostReactions")
+
+  @@index([createdById, deletedAt])
+}
+
+model Comment {
+  id           String      @id @default(uuid())
+  content      String
+
+  postId       String
+  post         Post        @relation("PostComments", fields: [postId], references: [id], onDelete: Cascade)
+
+  createdById  String
+  createdBy    User        @relation("UserComments", fields: [createdById], references: [id], onDelete: Cascade)
+
+  parentId     String?
+  parent       Comment?    @relation("ReplyComments", fields: [parentId], references: [id], onDelete: Cascade)
+  replies      Comment[]   @relation("ReplyComments")
+
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  deletedAt    DateTime?  
+
+  @@index([postId])
+  @@index([createdById])
+  @@index([parentId, deletedAt, createdAt])
+}
+
+model Reaction {
+  id           String        @id @default(uuid())
+  type         ReactionType
+
+  postId       String
+  post         Post          @relation("PostReactions", fields: [postId], references: [id], onDelete: Cascade)
+
+  createdById  String
+  createdBy    User          @relation("UserReactions", fields: [createdById], references: [id], onDelete: Cascade)
+
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@unique([postId, createdById])      // one reaction per user per post
+  @@index([postId, type, createdAt])              // quick counts by type
+}
+
+// ============================================
+// Chat: Rooms, Memberships, Messages
+// ============================================
+model Chatroom {
+  id           String         @id @default(uuid())
+  name         String?
+  isGroup      Boolean        @default(false)          // Distinguish DMs vs group chats
+  avatarUrl    String?
+  createdById  String
+  createdBy    User           @relation("UserChatroomsCreated", fields: [createdById], references: [id], onDelete: Cascade)
+
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  deletedAt    DateTime?                        // Soft delete support
+
+  memberships  ChatroomUser[]
+  messages     Message[]   @relation("ChatroomMessages")
+
+  @@index([createdById])
+  @@index([createdAt])
+}
+
+model ChatroomUser {
+  id           String       @id @default(uuid())
+  userId       String
+  chatroomId   String
+
+  role         ChatroomRole @default(MEMBER)          // Roles/permissions per room
+  joinedAt     DateTime     @default(now())
+  lastReadAt   DateTime?                              // Read receipts / unread counts
+  isMuted      Boolean      @default(false)           // Mute notifications per room
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chatroom     Chatroom     @relation(fields: [chatroomId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, chatroomId])                      // Prevent duplicate membership
+  @@index([chatroomId, userId])                       // Common queries per room
+}
+
+model Message {
+  id          String     @id @default(uuid())
+  content     String?                                   // Allow image-only messages
+  imageUrl    String?
+
+  userId      String     
+  chatroomId  String     
+
+  isEdited    Boolean    @default(false)
+  createdAt   DateTime   @default(now()) 
+  updatedAt   DateTime   @updatedAt
+  deletedAt   DateTime?                             // Unsend / soft delete
+
+  user        User       @relation("UserMessages", fields: [userId], references: [id], onDelete: Cascade)
+  chatroom    Chatroom   @relation("ChatroomMessages", fields: [chatroomId], references: [id], onDelete: Cascade)
+
+  @@index([chatroomId, createdAt, userId, deletedAt])                        // Pagination by time per room
+}
