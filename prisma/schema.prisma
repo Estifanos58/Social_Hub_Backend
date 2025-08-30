@@ -36,6 +36,7 @@ model User {
   id           String          @id @default(uuid())
   fullname     String
   username     String?         @unique @db.VarChar(30) // Optional handle for mentions/search
+  bio          String?         @db.VarChar(160)   // Short bio for profile
   avatarUrl    String?
   email        String          @unique
   lastSeenAt   DateTime?                      // Online presence & sorting recently active users
@@ -43,7 +44,6 @@ model User {
 
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
-  deletedAt    DateTime?                  // Soft delete support
 
   // Relations
   credential   Credential?    @relation("UserCredential")
@@ -54,7 +54,7 @@ model User {
   memberships  ChatroomUser[]                          // Explicit many-to-many with metadata
   chatroomsCreated Chatroom[] @relation("UserChatroomsCreated")
 
-  @@index([lastSeenAt, isActive, deletedAt])
+  @@index([lastSeenAt, isActive])
 }
 
 model Credential {
