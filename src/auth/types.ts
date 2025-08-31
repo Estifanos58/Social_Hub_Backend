@@ -6,3 +6,8 @@ export class RegisterResponse {
     @Field(() => User, { nullable: true })
     user?: User;
 }
+
+
+
+
+
