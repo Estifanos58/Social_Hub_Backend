@@ -34,8 +34,8 @@ enum ChatroomRole {
 // ============================================
 model User {
   id           String          @id @default(uuid())
-  fullname     String
-  username     String?         @unique @db.VarChar(30) // Optional handle for mentions/search
+  firstname    String          @db.VarChar(30)
+  lastname     String?         @db.VarChar(30)
   bio          String?         @db.VarChar(160)   // Short bio for profile
   avatarUrl    String?
   email        String          @unique
@@ -54,7 +54,7 @@ model User {
   memberships  ChatroomUser[]                          // Explicit many-to-many with metadata
   chatroomsCreated Chatroom[] @relation("UserChatroomsCreated")
 
-  @@index([lastSeenAt, isActive])
+  @@index([email, firstname])
 }
 
 model Credential {
