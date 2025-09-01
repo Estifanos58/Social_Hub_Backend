@@ -4,7 +4,7 @@ import { User } from "@prisma/client";
 import { Response } from "express";
 
 export const issueToken = (user: User, jwtService: JwtService, configService: ConfigService, response: Response) => {
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, email: user.email, firstname: user.firstname };
 
     const accessToken = jwtService.sign(payload, {
         secret: configService.get<string>('ACCESS_TOKEN_SECRET'),
