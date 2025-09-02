@@ -12,12 +12,13 @@ type Mutation {
 }
 
 type Query {
-  sayHello: String!
+  getuser: User!
 }
 
 input RegisterDto {
   email: String!
-  fullname: String!
+  firstname: String!
+  lastname: String!
   password: String!
 }
 

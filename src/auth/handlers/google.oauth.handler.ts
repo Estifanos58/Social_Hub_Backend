@@ -54,7 +54,8 @@ export class GoogleOAuthHandler implements ICommandHandler<GoogleOAuthCommand> {
       user = await this.prisma.user.create({
         data: {
           email,
-          fullname: `${given_name} ${family_name}`,
+          firstname: given_name,
+          lastname: family_name,
           avatarUrl: picture,
           credential: {
             create: { googleId: id },

@@ -34,7 +34,7 @@ export class RegisterHandler implements ICommandHandler<RegisterCommand> {
           email,
           firstname,
           lastname,
-          credentials: { create: { passwordHash: hashedPassword } },
+          credential: { create: { passwordHash: hashedPassword } },
         },
       });
 
