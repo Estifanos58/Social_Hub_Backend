@@ -6,9 +6,6 @@ export class User {
     id?: string;
 
     @Field()
-    username: string;
-
-    @Field()
     email: string;
 
     @Field( { nullable: true } )
@@ -18,7 +15,10 @@ export class User {
     bio?: string;
 
     @Field( { nullable: true } )
-    fullname?: string;
+    firstname?: string;
+
+    @Field( { nullable: true } )
+    lastname?: string;
 
     @Field( { nullable: true } )
     lastSeenAt?: Date;

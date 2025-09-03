@@ -20,6 +20,7 @@ export class RegisterHandler implements ICommandHandler<RegisterCommand> {
   ) {}
   async execute(command: RegisterCommand): Promise<any> {
     const { email, password, firstname, lastname, res } = command;
+    console.log('Hey from RegisterHandler');
     try {
       const existingUser = await this.prisma.user.findUnique({
         where: { email },
