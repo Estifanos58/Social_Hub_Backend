@@ -1,6 +1,6 @@
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Args, Context, Mutation, Resolver, Query } from '@nestjs/graphql';
-import { RegisterDto } from './dto';
+import { LoginDto, RegisterDto } from './dto';
 import { RegisterCommand } from './commands/register.command';
 import { Request, Response } from 'express';
 import { RegisterResponse } from './types';
@@ -8,6 +8,7 @@ import { User } from 'src/user/user.type';
 import { GetUserQuery } from './query/getUser.query';
 import { UseGuards } from '@nestjs/common';
 import { GraphQLAuthGuard } from './graphql-auth.guard';
+import { LoginCommand } from './commands/login.command';
 
 @Resolver()
 export class AuthResolver {
@@ -22,11 +23,24 @@ export class AuthResolver {
         @Args('registerInput') registerDto: RegisterDto,
         @Context() context: { res: Response}
     ) {
+        console.log("Registering user with email:", registerDto.email, "and name:", registerDto.firstname, registerDto.lastname);
         return this.commandBus.execute(new RegisterCommand(
             registerDto.email,
             registerDto.password,
             registerDto.firstname,
             registerDto.lastname,
+            context.res
+        ));
+    }
+
+    @Mutation(() => User)
+    async login(
+        @Args('loginInput') loginDto: LoginDto,
+        @Context() context: { res: Response}
+    ){
+        return this.commandBus.execute(new LoginCommand(
+            loginDto.email,
+            loginDto.password,
             context.res
         ));
     }
