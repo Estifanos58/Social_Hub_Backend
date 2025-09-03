@@ -3,7 +3,7 @@ import { Args, Context, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { LoginDto, RegisterDto } from './dto';
 import { RegisterCommand } from './commands/register.command';
 import { Request, Response } from 'express';
-import { RegisterResponse } from './types';
+import { LoginResponse, RegisterResponse } from './types';
 import { User } from 'src/user/user.type';
 import { GetUserQuery } from './query/getUser.query';
 import { UseGuards } from '@nestjs/common';
@@ -33,11 +33,12 @@ export class AuthResolver {
         ));
     }
 
-    @Mutation(() => User)
+    @Mutation(() => LoginResponse)
     async login(
         @Args('loginInput') loginDto: LoginDto,
         @Context() context: { res: Response}
     ){
+        // console.log("Logging in user with email:", loginDto.email, "and password:", loginDto.password);
         return this.commandBus.execute(new LoginCommand(
             loginDto.email,
             loginDto.password,

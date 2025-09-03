@@ -12,8 +12,12 @@ input LoginDto {
   password: String!
 }
 
+type LoginResponse {
+  user: User
+}
+
 type Mutation {
-  login(loginInput: LoginDto!): User!
+  login(loginInput: LoginDto!): LoginResponse!
   register(registerInput: RegisterDto!): RegisterResponse!
 }
 

@@ -7,6 +7,11 @@ export class RegisterResponse {
     user?: User;
 }
 
+@ObjectType()
+export class LoginResponse {
+    @Field(() => User, { nullable: true })
+    user?: User;
+}
 
 
 

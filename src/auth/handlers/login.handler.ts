@@ -23,6 +23,8 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
             include: { credential: true }
         });
 
+        // console.log("Found user:", user);
+
         if(!user) {
             throw new HttpException("Invalid credentials", HttpStatus.UNAUTHORIZED)
         }
