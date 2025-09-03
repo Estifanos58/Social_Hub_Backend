@@ -6,6 +6,8 @@ import { Request, Response } from 'express';
 import { RegisterResponse } from './types';
 import { User } from 'src/user/user.type';
 import { GetUserQuery } from './query/getUser.query';
+import { UseGuards } from '@nestjs/common';
+import { GraphQLAuthGuard } from './graphql-auth.guard';
 
 @Resolver()
 export class AuthResolver {
@@ -29,6 +31,7 @@ export class AuthResolver {
         ));
     }
 
+    @UseGuards(GraphQLAuthGuard)
     @Query(()=> User)
     async getuser(
         @Context() context: {req: Request}

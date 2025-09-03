@@ -38,6 +38,7 @@
     "cookie-parser": "^1.4.7",
     "graphql": "^16.11.0",
     "graphql-redis-subscriptions": "^2.7.0",
+    "ioredis": "^5.7.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
