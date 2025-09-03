@@ -20,13 +20,11 @@ export class GoogleOAuthHandler implements ICommandHandler<GoogleOAuthCommand> {
   async execute(command: GoogleOAuthCommand): Promise<any> {
     const { code, res } = command;
 
-    // Step 1: Exchange code for tokens
-    const { id_token, access_token, error: tokenError } =
-      await this.getGoogleOAuthTokens(code);
+    // console.log("Executing GoogleOAuthHandler with code:", code);
 
-    if (tokenError) {
-      throw new HttpException(tokenError, 400);
-    }
+    // Step 1: Exchange code for tokens
+    const { id_token, access_token} =
+      await this.getGoogleOAuthTokens(code);
 
     // Step 2: Get user profile
     const {
@@ -36,12 +34,7 @@ export class GoogleOAuthHandler implements ICommandHandler<GoogleOAuthCommand> {
       given_name,
       family_name,
       picture,
-      error: userError,
     } = await this.getGoogleUser(access_token);
-
-    if (userError) {
-      throw new HttpException(userError.message, 400);
-    }
 
     if (!verified_email) {
       throw new HttpException('Google account not verified', 400);
@@ -49,6 +42,8 @@ export class GoogleOAuthHandler implements ICommandHandler<GoogleOAuthCommand> {
 
     // Step 3: Upsert user
     let user: User | null = await this.prisma.user.findUnique({ where: { email } });
+
+    // console.log("Google OAuth user info:", { id, email, given_name, family_name });
    
     if (!user) {
       user = await this.prisma.user.create({
@@ -64,7 +59,9 @@ export class GoogleOAuthHandler implements ICommandHandler<GoogleOAuthCommand> {
       });
     }
 
-     return issueToken(user, this.jwtService, this.configService, res);
+    issueToken(user, this.jwtService, this.configService, res);
+
+    res.redirect(this.configService.get('CLIENT_URL') || 'http://localhost:3000');
   }
 
   private async getGoogleOAuthTokens(code: string): Promise<any> {
@@ -74,7 +71,7 @@ export class GoogleOAuthHandler implements ICommandHandler<GoogleOAuthCommand> {
         code,
         client_id: this.configService.get('GOOGLE_CLIENT_ID'),
         client_secret: this.configService.get('GOOGLE_CLIENT_SECRET'),
-        redirect_uri: this.configService.get('GOOGLE_REDIRECT_URI'),
+        redirect_uri: this.configService.get('GOOGLE_REDIRECT_URL'),
         grant_type: 'authorization_code',
       };
 
@@ -88,7 +85,7 @@ export class GoogleOAuthHandler implements ICommandHandler<GoogleOAuthCommand> {
 
       return response.data;
     } catch (error) {
-      return error.response?.data || { error: 'Failed to fetch tokens' };
+      throw new HttpException('Failed to fetch Google OAuth tokens', 400);
     }
   }
 
@@ -103,7 +100,7 @@ export class GoogleOAuthHandler implements ICommandHandler<GoogleOAuthCommand> {
 
       return response.data;
     } catch (error) {
-      return error.response?.data || { error: 'Failed to fetch user info' };
+      throw new HttpException('Failed to fetch Google user', 400);
     }
   }
 }
