@@ -10,11 +10,23 @@ import { GoogleOAuthHandler } from './handlers/google.oauth.handler';
 import { HttpModule, HttpService } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 import { AuthService } from './auth.service';
+import { MailModule } from 'src/mail/mail.module';
+import { VerificationTokenHandler } from './event/verificationToken.handler';
+import { EmailConfirmedHandler } from './event/emailConfirmed.handler';
 
 const CommandHandlers = [RegisterHandler, LoginHandler, GoogleOAuthHandler];
+
 @Module({
-  imports: [CqrsModule, HttpModule, ConfigModule],
+  imports: [CqrsModule, HttpModule, ConfigModule, MailModule],
   controllers: [AuthController],
-  providers: [AuthResolver,AuthService , PrismaService, JwtService, ...CommandHandlers]
+  providers: [
+    AuthResolver,
+    AuthService,
+    PrismaService,
+    VerificationTokenHandler,
+    EmailConfirmedHandler,
+    JwtService,
+    ...CommandHandlers,
+  ],
 })
 export class AuthModule {}

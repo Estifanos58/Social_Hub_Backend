@@ -40,7 +40,8 @@ model User {
   avatarUrl    String?
   email        String          @unique
   lastSeenAt   DateTime?                      // Online presence & sorting recently active users
-  isActive     Boolean         @default(true)   // Soft-ban / deactivate without deleting
+  verified    Boolean         @default(false)   // Email verified
+
 
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
@@ -63,6 +64,12 @@ model Credential {
   twoFactorEnabled Boolean  @default(false)
   twoFactorSecret  String?
   refreshToken     String?                           // For JWT refresh flows
+
+  verificationToken String?                        // Email verification token
+  verificationTokenExpiry DateTime?
+
+  resetToken      String?                        // Password reset token
+  resetTokenExpiry DateTime?
 
   userId           String   @unique
   user             User     @relation("UserCredential", fields: [userId], references: [id], onDelete: Cascade)
