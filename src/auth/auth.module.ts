@@ -3,18 +3,46 @@ import { AuthResolver } from './auth.resolver';
 import { PrismaService } from 'src/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { CqrsModule } from '@nestjs/cqrs';
-import { RegisterHandler } from './handlers/register.handler';
-import { LoginHandler } from './handlers/login.handler';
 import { AuthController } from './auth.controller';
-import { GoogleOAuthHandler } from './handlers/google.oauth.handler';
-import { HttpModule, HttpService } from '@nestjs/axios';
+import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
-import { AuthService } from './auth.service';
+import { MailModule } from 'src/mail/mail.module';
+import {
+  ForgotPasswordHandler,
+  GetUserHandler,
+  GoogleOAuthHandler,
+  LoginHandler,
+  RegisterHandler,
+} from './handlers';
+import {
+  EmailConfirmedEventHandler,
+  ForgotPasswordEventHandler,
+  VerificationTokenEventHandler,
+} from './event';
 
-const CommandHandlers = [RegisterHandler, LoginHandler, GoogleOAuthHandler];
+const CommandHandlers = [
+  RegisterHandler,
+  LoginHandler,
+  GoogleOAuthHandler,
+  ForgotPasswordHandler,
+];
+const EventHandlers = [
+  VerificationTokenEventHandler,
+  EmailConfirmedEventHandler,
+  ForgotPasswordEventHandler,
+];
+const QueryHandlers = [GetUserHandler];
+
 @Module({
-  imports: [CqrsModule, HttpModule, ConfigModule],
+  imports: [CqrsModule, HttpModule, ConfigModule, MailModule],
   controllers: [AuthController],
-  providers: [AuthResolver,AuthService , PrismaService, JwtService, ...CommandHandlers]
+  providers: [
+    AuthResolver,
+    PrismaService,
+    JwtService,
+    ...CommandHandlers,
+    ...EventHandlers,
+    ...QueryHandlers,
+  ],
 })
 export class AuthModule {}

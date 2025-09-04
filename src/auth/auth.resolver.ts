@@ -3,12 +3,14 @@ import { Args, Context, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { LoginDto, RegisterDto } from './dto';
 import { RegisterCommand } from './commands/register.command';
 import { Request, Response } from 'express';
-import { LoginResponse, RegisterResponse } from './types';
+import { UserResponse } from './types';
 import { User } from 'src/user/user.type';
 import { GetUserQuery } from './query/getUser.query';
 import { UseGuards } from '@nestjs/common';
 import { GraphQLAuthGuard } from './graphql-auth.guard';
 import { LoginCommand } from './commands/login.command';
+import { VerifiEmailCommand } from './commands/verifyEmail.command';
+import { ForgotPasswordCommand } from './commands/forgotPassword.command';
 
 @Resolver()
 export class AuthResolver {
@@ -18,12 +20,12 @@ export class AuthResolver {
     ){}
 
     
-    @Mutation(() => RegisterResponse)
+    @Mutation(() => UserResponse)
     async register(
         @Args('registerInput') registerDto: RegisterDto,
         @Context() context: { res: Response}
     ) {
-        console.log("Registering user with email:", registerDto.email, "and name:", registerDto.firstname, registerDto.lastname);
+        // console.log("Registering user with email:", registerDto.email, "and name:", registerDto.firstname, registerDto.lastname);
         return this.commandBus.execute(new RegisterCommand(
             registerDto.email,
             registerDto.password,
@@ -33,7 +35,17 @@ export class AuthResolver {
         ));
     }
 
-    @Mutation(() => LoginResponse)
+    @UseGuards(GraphQLAuthGuard)
+    @Mutation(() => UserResponse)
+    async verifyEmail(
+        @Args('token') token: string,
+        @Context() context: { req: Request }
+    ): Promise<User> {
+        const userId = context.req.user?.sub!;
+        return this.commandBus.execute(new VerifiEmailCommand(token, userId));
+    }
+
+    @Mutation(() => UserResponse)
     async login(
         @Args('loginInput') loginDto: LoginDto,
         @Context() context: { res: Response}
@@ -44,6 +56,16 @@ export class AuthResolver {
             loginDto.password,
             context.res
         ));
+    }
+
+    @UseGuards(GraphQLAuthGuard)
+    @Mutation(()=> String)
+    async forgotPassword(
+        @Args('email') email: string,
+        @Context() context: { req: Request }
+    ){
+        const userId = context.req.user?.sub!;
+        return this.commandBus.execute(new ForgotPasswordCommand(email, userId));
     }
 
     @UseGuards(GraphQLAuthGuard)

@@ -11,6 +11,8 @@ import { TokenService } from './token/token.service';
 import * as cookie from 'cookie';
 import { TokenModule } from './token/token.module';
 import Redis from 'ioredis';
+import { MailModule } from './mail/mail.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 const redisClient = new Redis(process.env.REDIS_URL!, {
   tls: {}
@@ -28,11 +30,13 @@ const pubSub = new RedisPubSub({
 
 @Module({
   imports: [
-    AuthModule,
-    TokenModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    AuthModule,
+    TokenModule,
+    MailModule,
+    EventEmitterModule.forRoot(),
     GraphQLModule.forRootAsync({
       imports: [ConfigModule, AuthModule, TokenModule],
       inject: [ConfigService, TokenService],
