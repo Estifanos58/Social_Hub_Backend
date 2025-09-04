@@ -74,10 +74,10 @@ export class AuthResolver {
     async resetPassword(
         @Args('token') token: string,
         @Args('newPassword') newPassword: string,
-        @Context() context: { req: Request}
+        @Context() context: { req: Request, res: Response}
     ){
         const userId = context.req.user?.sub!;
-        return this.commandBus.execute(new ResetPasswordCommand(token, newPassword, userId));
+        return this.commandBus.execute(new ResetPasswordCommand(userId, token, newPassword, context.res));
     }
 
     @UseGuards(GraphQLAuthGuard)

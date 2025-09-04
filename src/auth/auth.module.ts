@@ -14,6 +14,7 @@ import {
   LoginHandler,
   RegisterHandler,
   ResetPasswordHandler,
+  VerifyEmailHandler,
 } from './handlers';
 import {
   EmailConfirmedEventHandler,
@@ -27,7 +28,8 @@ const CommandHandlers = [
   LoginHandler,
   GoogleOAuthHandler,
   ForgotPasswordHandler,
-  ResetPasswordHandler
+  ResetPasswordHandler,
+  VerifyEmailHandler
 ];
 const EventHandlers = [
   VerificationTokenEventHandler,

@@ -2,13 +2,11 @@ import { Controller, Get, Post, Query, Res } from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
 import { GoogleOAuthCommand } from "./commands/google.oauth.command";
 import { Response } from "express";
-import { AuthService } from "./auth.service";
 
 @Controller('auth')
 export class AuthController {
     constructor(
         private readonly commandBus: CommandBus,
-        private readonly authService: AuthService
     ){}
 
     @Get('google')
@@ -17,7 +15,7 @@ export class AuthController {
         @Res() res: Response
 
     ) {
-        console.log("Google OAuth endpoint hit");
+        // console.log("Google OAuth endpoint hit");
         const auth =  this.commandBus.execute(new GoogleOAuthCommand(code, res));
         
         // return 

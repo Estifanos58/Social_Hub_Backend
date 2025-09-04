@@ -4,15 +4,20 @@ import { PrismaService } from "src/prisma.service";
 import { HttpException, HttpStatus, InternalServerErrorException } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import * as bcrypt from 'bcrypt';
+import { issueToken } from "src/utils/issueToken";
+import { JwtService } from "@nestjs/jwt";
+import { ConfigService } from "@nestjs/config";
 
 @CommandHandler(ResetPasswordCommand)
 export class ResetPasswordHandler implements ICommandHandler<ResetPasswordCommand> {
     constructor(
         private readonly prismaService: PrismaService,
+        private readonly jwtService: JwtService,
+        private readonly configService: ConfigService,
         private readonly eventEmitter: EventEmitter2,
     ){}
     async execute(command: ResetPasswordCommand): Promise<any> {
-        const {userId, resetToken, newPassword} = command
+        const {userId, resetToken, newPassword, response} = command
 
         try {
             
@@ -38,7 +43,7 @@ export class ResetPasswordHandler implements ICommandHandler<ResetPasswordComman
 
             this.eventEmitter.emit('password.reset', {email: credential.user.email, firstname: credential.user.firstname})
 
-            return credential.user
+            return issueToken(credential.user, this.jwtService, this.configService, response);
 
 
         } catch (error) {
