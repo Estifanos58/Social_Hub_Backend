@@ -10,6 +10,7 @@ import { UseGuards } from '@nestjs/common';
 import { GraphQLAuthGuard } from './graphql-auth.guard';
 import { LoginCommand } from './commands/login.command';
 import { VerifiEmailCommand } from './commands/verifyEmail.command';
+import { ForgotPasswordCommand } from './commands/forgotPassword.command';
 
 @Resolver()
 export class AuthResolver {
@@ -55,6 +56,16 @@ export class AuthResolver {
             loginDto.password,
             context.res
         ));
+    }
+
+    @UseGuards(GraphQLAuthGuard)
+    @Mutation(()=> String)
+    async forgotPassword(
+        @Args('email') email: string,
+        @Context() context: { req: Request }
+    ){
+        const userId = context.req.user?.sub!;
+        return this.commandBus.execute(new ForgotPasswordCommand(email, userId));
     }
 
     @UseGuards(GraphQLAuthGuard)

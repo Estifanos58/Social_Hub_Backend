@@ -2,11 +2,10 @@ import { Injectable } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
 import { MailService } from "src/mail/mail.service";
 import { VERIFICATIONTOKEN } from "src/utils/htmlTemplate";
-import { VerifiEmailCommand } from "../commands/verifyEmail.command";
 import { VerificationTokenEvent } from "./verificationToken.event";
 
 @Injectable()
-export class VerificationTokenHandler {
+export class VerificationTokenEventHandler {
     constructor(
         private readonly mailService: MailService,    
     ){}

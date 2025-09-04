@@ -164,3 +164,92 @@ export const EMAILVERIFIED = `
 </body>
 </html>
 `
+
+export const FORGOTPASSWORD = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SocialHub - Reset Your Password</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #fafafa;
+      color: #262626;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: #fff;
+      border: 1px solid #dbdbdb;
+      border-radius: 8px;
+      padding: 30px;
+    }
+    .logo {
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+      color: #262626;
+      margin-bottom: 20px;
+    }
+    .title {
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+      color: #262626;
+    }
+    .message {
+      font-size: 14px;
+      text-align: center;
+      color: #262626;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .token-box {
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      background: #f7f7f7;
+      padding: 12px 20px;
+      border-radius: 6px;
+      border: 1px solid #dbdbdb;
+      margin: 20px auto;
+      display: inline-block;
+      letter-spacing: 2px;
+    }
+    .footer {
+      font-size: 12px;
+      text-align: center;
+      color: #999;
+      margin-top: 20px;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 20px; }
+      .token-box { font-size: 18px; padding: 10px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">SocialHub</div>
+    <div class="title">Reset Your Password</div>
+    <div class="message">
+      Hi <strong>{firstname}</strong>, <br><br>
+      We received a request to reset your SocialHub password. <br>
+      Use the following code to reset your password (expires in 15 minutes):
+    </div>
+    <div class="token-box">{resetToken}</div>
+    <div class="message">
+      If you didn’t request this, you can safely ignore this email.
+    </div>
+    <div class="footer">
+      &copy; {year} SocialHub. All rights reserved.
+    </div>
+  </div>
+</body>
+</html>
+`

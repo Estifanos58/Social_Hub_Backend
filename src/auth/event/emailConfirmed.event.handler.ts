@@ -5,7 +5,7 @@ import { EmailConfirmedEvent } from "./emailConfirmed.event";
 import { EMAILVERIFIED } from "src/utils/htmlTemplate";
 
 @Injectable()
-export class EmailConfirmedHandler {
+export class EmailConfirmedEventHandler {
     constructor(
         private readonly mailService: MailService,
     ){}
