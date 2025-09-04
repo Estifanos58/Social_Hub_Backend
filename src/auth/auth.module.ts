@@ -13,10 +13,12 @@ import {
   GoogleOAuthHandler,
   LoginHandler,
   RegisterHandler,
+  ResetPasswordHandler,
 } from './handlers';
 import {
   EmailConfirmedEventHandler,
   ForgotPasswordEventHandler,
+  ResetPasswordEventHandler,
   VerificationTokenEventHandler,
 } from './event';
 
@@ -25,11 +27,13 @@ const CommandHandlers = [
   LoginHandler,
   GoogleOAuthHandler,
   ForgotPasswordHandler,
+  ResetPasswordHandler
 ];
 const EventHandlers = [
   VerificationTokenEventHandler,
   EmailConfirmedEventHandler,
   ForgotPasswordEventHandler,
+  ResetPasswordEventHandler
 ];
 const QueryHandlers = [GetUserHandler];
 

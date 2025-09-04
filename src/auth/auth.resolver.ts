@@ -11,6 +11,7 @@ import { GraphQLAuthGuard } from './graphql-auth.guard';
 import { LoginCommand } from './commands/login.command';
 import { VerifiEmailCommand } from './commands/verifyEmail.command';
 import { ForgotPasswordCommand } from './commands/forgotPassword.command';
+import { ResetPasswordCommand } from './commands/resetPassword.command';
 
 @Resolver()
 export class AuthResolver {
@@ -69,12 +70,33 @@ export class AuthResolver {
     }
 
     @UseGuards(GraphQLAuthGuard)
+    @Mutation(()=> UserResponse)
+    async resetPassword(
+        @Args('token') token: string,
+        @Args('newPassword') newPassword: string,
+        @Context() context: { req: Request}
+    ){
+        const userId = context.req.user?.sub!;
+        return this.commandBus.execute(new ResetPasswordCommand(token, newPassword, userId));
+    }
+
+    @UseGuards(GraphQLAuthGuard)
     @Query(()=> User)
     async getuser(
         @Context() context: {req: Request}
     ){
         const userId = context.req.user?.sub!;
         return this.queryBus.execute(new GetUserQuery(userId));
+    }
+
+
+    @Mutation(() => String)
+    async logout(
+        @Context() context: { res: Response}
+    ){
+        context.res.clearCookie('accessToken', { httpOnly: true, sameSite: 'none', secure: true });
+        context.res.clearCookie('refreshToken', { httpOnly: true, sameSite: 'none', secure: true });
+        return 'Successfully logged out';
     }
     
 }

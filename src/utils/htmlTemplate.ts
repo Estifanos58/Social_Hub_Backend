@@ -253,3 +253,83 @@ export const FORGOTPASSWORD = `
 </body>
 </html>
 `
+
+export const PASSWORDRESETCONFIRMED = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SocialHub - Password Reset Successful</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #fafafa;
+      color: #262626;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: #fff;
+      border: 1px solid #dbdbdb;
+      border-radius: 8px;
+      padding: 30px;
+    }
+    .logo {
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+      color: #262626;
+      margin-bottom: 20px;
+    }
+    .title {
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+      color: #262626;
+    }
+    .message {
+      font-size: 14px;
+      text-align: center;
+      color: #262626;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .checkmark {
+      text-align: center;
+      font-size: 48px;
+      color: #4BB543;
+      margin-bottom: 20px;
+    }
+    .footer {
+      font-size: 12px;
+      text-align: center;
+      color: #999;
+      margin-top: 20px;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 20px; }
+      .checkmark { font-size: 40px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">SocialHub</div>
+    <div class="checkmark">&#10004;</div>
+    <div class="title">Password Reset Successful</div>
+    <div class="message">
+      Hi <strong>{firstname}</strong>, <br><br>
+      Your SocialHub password has been successfully reset. <br>
+      If this wasn’t you, please secure your account immediately.
+    </div>
+    <div class="footer">
+      &copy; {year} SocialHub. All rights reserved.
+    </div>
+  </div>
+</body>
+</html>
+`
