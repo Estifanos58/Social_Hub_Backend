@@ -53,6 +53,7 @@ export class GoogleOAuthHandler implements ICommandHandler<GoogleOAuthCommand> {
           firstname: given_name,
           lastname: family_name,
           avatarUrl: picture,
+          verified: true,
           credential: {
             create: { googleId: id },
           },
