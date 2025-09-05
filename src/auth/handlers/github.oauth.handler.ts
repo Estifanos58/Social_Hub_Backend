@@ -24,7 +24,7 @@ export class GithubOAuthHandler implements ICommandHandler<GithubOAuthCommand> {
   async execute(command: GithubOAuthCommand): Promise<any> {
     const { code, response } = command;
     try {
-      console.log('GitHub OAuth code:', code);
+      // console.log('GitHub OAuth code:', code);
       const { access_token } = await this.getGithubOAuthTokens(code);
       const { id, login, email, name, avatarUrl } =
         await this.getGithubUser(access_token);
@@ -59,6 +59,7 @@ export class GithubOAuthHandler implements ICommandHandler<GithubOAuthCommand> {
       if (error instanceof HttpException) {
         throw error;
       }
+      // console.error('GitHub OAuth Error:', error);
       throw new InternalServerErrorException('Internal Server Error');
     }
   }
@@ -86,28 +87,32 @@ export class GithubOAuthHandler implements ICommandHandler<GithubOAuthCommand> {
   }
 
   private async getGithubUser(access_token: string): Promise<any> {
-    try {
-      const url = 'https://api.github.com/user/';
+  try {
+    // 1. Get the user profile
+    const userUrl = 'https://api.github.com/user';
+    const userRes = await this.httpService.axiosRef.get(userUrl, {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    });
 
-      const userRes = await this.httpService.axiosRef.get(url, {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      });
-      const emailRes = await this.httpService.axiosRef.get(url, {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      });
-      const primaryEmailRes = emailRes.data.find(
-        (email) => email.primary,
-      )?.email;
+    // 2. Get the user's emails (this returns an array of objects)
+    const emailUrl = 'https://api.github.com/user/emails';
+    const emailRes = await this.httpService.axiosRef.get(emailUrl, {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    });
 
-      const { id, login, name, avatarUrl } = userRes.data;
-      const email = primaryEmailRes;
-      return { id, login, email, name, avatarUrl };
-    } catch (error) {
-      throw new Error(`Failed to fetch GitHub user: ${error.message}`);
-    }
+    // Find the primary email (GitHub marks one as primary)
+    const primaryEmail = emailRes.data.find((email) => email.primary)?.email;
+
+    const { id, login, name, avatar_url } = userRes.data;
+
+    return { id, login, email: primaryEmail, name, avatarUrl: avatar_url };
+  } catch (error) {
+    throw new Error(`Failed to fetch GitHub user: ${error.message}`);
   }
+}
+
 }
