@@ -22,11 +22,13 @@ import {
   ResetPasswordEventHandler,
   VerificationTokenEventHandler,
 } from './event';
+import { GithubOAuthHandler } from './handlers/github.oauth.handler';
 
 const CommandHandlers = [
   RegisterHandler,
   LoginHandler,
   GoogleOAuthHandler,
+  GithubOAuthHandler,
   ForgotPasswordHandler,
   ResetPasswordHandler,
   VerifyEmailHandler
