@@ -12,13 +12,13 @@ input LoginDto {
   password: String!
 }
 
-type LoginResponse {
-  user: User
-}
-
 type Mutation {
-  login(loginInput: LoginDto!): LoginResponse!
-  register(registerInput: RegisterDto!): RegisterResponse!
+  forgotPassword(email: String!): String!
+  login(loginInput: LoginDto!): UserResponse!
+  logout: String!
+  register(registerInput: RegisterDto!): UserResponse!
+  resetPassword(newPassword: String!, token: String!): UserResponse!
+  verifyEmail(token: String!): UserResponse!
 }
 
 type Query {
@@ -32,10 +32,6 @@ input RegisterDto {
   password: String!
 }
 
-type RegisterResponse {
-  user: User
-}
-
 type User {
   avatarUrl: String
   bio: String
@@ -47,4 +43,8 @@ type User {
   lastSeenAt: DateTime
   lastname: String
   updatedAt: DateTime
+}
+
+type UserResponse {
+  user: User
 }

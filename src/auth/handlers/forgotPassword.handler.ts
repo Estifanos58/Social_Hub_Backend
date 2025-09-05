@@ -4,6 +4,7 @@ import { PrismaService } from "src/prisma.service";
 import { HttpException, HttpStatus, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { ForgotPasswordEvent } from "../event/forgotPassword.event";
+import { generateVerificationCode } from "src/utils/generateVerificationToken";
 
 @CommandHandler(ForgotPasswordCommand)
 export class ForgotPasswordHandler implements ICommandHandler<ForgotPasswordCommand> {
@@ -25,7 +26,7 @@ export class ForgotPasswordHandler implements ICommandHandler<ForgotPasswordComm
                 throw new NotFoundException('User Not Found')
             }
 
-            const token = generateVerificationCode()
+            const token = generateVerificationCode(6)
             const tokenExpriresAt = new Date(Date.now() + 15 * 60 * 1000);
 
             if(credential.googleId){

@@ -12,6 +12,7 @@ import * as bcrypt from 'bcrypt';
 import { issueToken } from 'src/utils/issueToken';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { VerificationTokenEvent } from '../event/verificationToken.event';
+import { generateVerificationCode } from 'src/utils/generateVerificationToken';
 
 @CommandHandler(RegisterCommand)
 export class RegisterHandler implements ICommandHandler<RegisterCommand> {
@@ -32,7 +33,7 @@ export class RegisterHandler implements ICommandHandler<RegisterCommand> {
         throw new HttpException('User already exists', HttpStatus.CONFLICT);
       }
       const hashedPassword = await bcrypt.hash(password, 10);
-      const verificationToken = generateVerificationCode();
+      const verificationToken = generateVerificationCode(4);
       const verificationTokenExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes from now
 
       const newUser = await this.prisma.user.create({
@@ -50,7 +51,11 @@ export class RegisterHandler implements ICommandHandler<RegisterCommand> {
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
-      }else throw new InternalServerErrorException('Failed to register user');
+      }
+      else {
+        console.log('HTTP EXCEPTION', error);
+        throw new InternalServerErrorException('Failed to register user');
+      }
     }
   }
 }

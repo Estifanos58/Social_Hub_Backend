@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { GoogleOAuthCommand } from '../commands/google.oauth.command';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
-import { HttpException } from '@nestjs/common';
+import { HttpException, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { User } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
@@ -22,8 +22,9 @@ export class GoogleOAuthHandler implements ICommandHandler<GoogleOAuthCommand> {
 
     // console.log("Executing GoogleOAuthHandler with code:", code);
 
-    // Step 1: Exchange code for tokens
-    const { id_token, access_token} =
+    try {
+        // Step 1: Exchange code for tokens
+    const { access_token} =
       await this.getGoogleOAuthTokens(code);
 
     // Step 2: Get user profile
@@ -62,6 +63,12 @@ export class GoogleOAuthHandler implements ICommandHandler<GoogleOAuthCommand> {
     issueToken(user, this.jwtService, this.configService, res);
 
     res.redirect(this.configService.get('CLIENT_URL') || 'http://localhost:3000');
+    } catch (error) {
+         if(error instanceof HttpException) {
+                throw error;
+              }
+              throw new InternalServerErrorException("Internal Server Error")
+    }
   }
 
   private async getGoogleOAuthTokens(code: string): Promise<any> {

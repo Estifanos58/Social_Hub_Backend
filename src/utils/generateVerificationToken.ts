@@ -1,7 +1,9 @@
-function generateVerificationCode(): string {
-  // Use crypto for stronger randomness
-  const array = new Uint32Array(1);
-  // If running in Node.js, use: require("crypto").randomInt(100000, 999999)
-  const code = (array[0] % 900000) + 100000; 
-  return code.toString();
+export function generateVerificationCode(length: number): string {
+  if (length <= 0) throw new Error("Length must be greater than 0");
+
+  const min = Math.pow(10, length - 1);   // e.g., 1000 for 4 digits
+  const max = Math.pow(10, length) - 1;   // e.g., 9999 for 4 digits
+
+  const random = Math.floor(Math.random() * (max - min + 1)) + min;
+  return random.toString();
 }
