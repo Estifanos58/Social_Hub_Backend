@@ -2,7 +2,6 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
-import { Observable } from 'rxjs';
 import { PrismaService } from 'src/prisma.service';
 import { issueToken } from 'src/utils/issueToken';
 

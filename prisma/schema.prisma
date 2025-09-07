@@ -55,7 +55,25 @@ model User {
   memberships  ChatroomUser[]                          // Explicit many-to-many with metadata
   chatroomsCreated Chatroom[] @relation("UserChatroomsCreated")
 
+  followers    Follower[]      @relation("UserFollowers")
+  following    Follower[]      @relation("UserFollowing")
+
   @@index([email, firstname])
+}
+
+model Follower {
+  id           String   @id @default(uuid())
+  followerId   String
+  followingId  String
+
+  createdAt    DateTime @default(now())
+
+  // Relations
+  follower     User     @relation("UserFollowing", fields: [followerId], references: [id], onDelete: Cascade)
+  following    User     @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId]) // prevent duplicates
+  @@index([followingId, followerId])  // query optimizations
 }
 
 model Credential {

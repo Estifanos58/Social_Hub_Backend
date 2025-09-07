@@ -7,7 +7,7 @@ import { UserResponse } from './types';
 import { User } from 'src/user/user.type';
 import { GetUserQuery } from './query/getUser.query';
 import { UseGuards } from '@nestjs/common';
-import { GraphQLAuthGuard } from './graphql-auth.guard';
+import { GraphQLAuthGuard } from '../guard/graphql-auth.guard';
 import { LoginCommand } from './commands/login.command';
 import { VerifiEmailCommand } from './commands/verifyEmail.command';
 import { ForgotPasswordCommand } from './commands/forgotPassword.command';
