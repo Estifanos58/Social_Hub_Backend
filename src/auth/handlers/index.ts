@@ -1,5 +1,5 @@
 export * from './forgotPassword.handler'
-export * from './getUser.handler'
+export * from './getCurrentUser.handler'
 export * from './google.oauth.handler'
 export * from './login.handler'
 export * from './register.handler'

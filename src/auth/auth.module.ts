@@ -9,7 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MailModule } from 'src/mail/mail.module';
 import {
   ForgotPasswordHandler,
-  GetUserHandler,
+  GetCurrentUserHandler,
   GoogleOAuthHandler,
   LoginHandler,
   RegisterHandler,
@@ -39,7 +39,7 @@ const EventHandlers = [
   ForgotPasswordEventHandler,
   ResetPasswordEventHandler
 ];
-const QueryHandlers = [GetUserHandler];
+const QueryHandlers = [GetCurrentUserHandler];
 
 @Module({
   imports: [CqrsModule, HttpModule, ConfigModule, MailModule],

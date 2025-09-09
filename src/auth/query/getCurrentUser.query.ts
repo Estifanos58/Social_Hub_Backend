@@ -1,4 +1,4 @@
-export class GetUserQuery{
+export class GetCurrentUserQuery{
     constructor(
         public readonly userId: string
     ){}

@@ -47,7 +47,7 @@ export class UserResolver {
         @Args('userId') userId: string,
         @Context() context: { req: Request }   
     )
-    : Promise<UserResponse> {
+    : Promise<UserProfileDto> {
         return this.queryBus.execute(new GetUserQuery(
             userId,
             context.req.user?.sub!

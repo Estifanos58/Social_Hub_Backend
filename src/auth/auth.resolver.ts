@@ -4,14 +4,14 @@ import { LoginDto, RegisterDto } from './dto';
 import { RegisterCommand } from './commands/register.command';
 import { Request, Response } from 'express';
 import { UserResponse } from './types';
-import { User } from 'src/user/types/user.type';
-import { GetUserQuery } from './query/getUser.query';
+import { GetCurrentUserQuery } from './query/getCurrentUser.query';
 import { UseGuards } from '@nestjs/common';
 import { GraphQLAuthGuard } from '../guard/graphql-auth.guard';
 import { LoginCommand } from './commands/login.command';
 import { VerifiEmailCommand } from './commands/verifyEmail.command';
 import { ForgotPasswordCommand } from './commands/forgotPassword.command';
 import { ResetPasswordCommand } from './commands/resetPassword.command';
+import { UserDto } from 'src/types';
 
 @Resolver()
 export class AuthResolver {
@@ -41,7 +41,7 @@ export class AuthResolver {
     async verifyEmail(
         @Args('token') token: string,
         @Context() context: { req: Request }
-    ): Promise<User> {
+    ): Promise<UserResponse> {
         const userId = context.req.user?.sub!;
         return this.commandBus.execute(new VerifiEmailCommand(token, userId));
     }
@@ -81,12 +81,12 @@ export class AuthResolver {
     }
 
     @UseGuards(GraphQLAuthGuard)
-    @Query(()=> User)
-    async getuser(
+    @Query(()=> UserResponse)
+    async getme(
         @Context() context: {req: Request}
     ){
         const userId = context.req.user?.sub!;
-        return this.queryBus.execute(new GetUserQuery(userId));
+        return this.queryBus.execute(new GetCurrentUserQuery(userId));
     }
 
 

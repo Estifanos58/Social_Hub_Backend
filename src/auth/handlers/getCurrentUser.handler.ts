@@ -1,14 +1,14 @@
 import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
-import { GetUserQuery } from "../query/getUser.query";
+import { GetCurrentUserQuery } from "../query/getCurrentUser.query";
 import { InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/prisma.service";
 
-@QueryHandler(GetUserQuery)
-export class GetUserHandler implements IQueryHandler<GetUserQuery> {
+@QueryHandler(GetCurrentUserQuery)
+export class GetCurrentUserHandler implements IQueryHandler<GetCurrentUserQuery> {
     constructor(
         private readonly prismaService: PrismaService
     ){}
-    async execute(query: GetUserQuery){
+    async execute(query: GetCurrentUserQuery){
         const { userId } = query
 
         try {
