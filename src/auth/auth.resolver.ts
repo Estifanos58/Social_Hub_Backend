@@ -4,7 +4,7 @@ import { LoginDto, RegisterDto } from './dto';
 import { RegisterCommand } from './commands/register.command';
 import { Request, Response } from 'express';
 import { UserResponse } from './types';
-import { User } from 'src/user/user.type';
+import { User } from 'src/user/types/user.type';
 import { GetUserQuery } from './query/getUser.query';
 import { UseGuards } from '@nestjs/common';
 import { GraphQLAuthGuard } from '../guard/graphql-auth.guard';

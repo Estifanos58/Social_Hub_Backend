@@ -6,6 +6,8 @@ import { GraphQLAuthGuard } from "src/guard/graphql-auth.guard";
 import { FollowUserCommand } from "./commands/FollowUserCommand";
 import { Request } from "express";
 import { UnFollowUserCommand } from "./commands/UnFollowUserCommand";
+import { GetUserQuery } from "./query/GetUser.query";
+import { UserProfileDto } from "./types/getUser.type";
 
 @Resolver()
 export class UserResolver {
@@ -38,5 +40,18 @@ export class UserResolver {
         ));
     }
 
+
+    @UseGuards(GraphQLAuthGuard)
+    @Mutation(()=> UserProfileDto)
+    async GetUser(
+        @Args('userId') userId: string,
+        @Context() context: { req: Request }   
+    )
+    : Promise<UserResponse> {
+        return this.queryBus.execute(new GetUserQuery(
+            userId,
+            context.req.user?.sub!
+        ));
+    }
     
 }

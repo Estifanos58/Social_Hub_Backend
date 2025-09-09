@@ -1,10 +1,10 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { User } from "src/user/user.type";
+import { UserDto } from "src/types";
 
 @ObjectType()
 export class UserResponse {
-    @Field(() => User, { nullable: true })
-    user?: User;
+    @Field(() => UserDto, { nullable: true })
+    user?: UserDto;
 }
 
 
