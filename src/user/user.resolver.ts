@@ -8,6 +8,8 @@ import { Request } from "express";
 import { UnFollowUserCommand } from "./commands/UnFollowUserCommand";
 import { GetUserQuery } from "./query/GetUser.query";
 import { UserProfileDto } from "./types/getUser.type";
+import { UpdateUserDto } from "./dto";
+import { UpdateUserCommand } from "./commands/UpdateUserCommand";
 
 @Resolver()
 export class UserResolver {
@@ -54,4 +56,22 @@ export class UserResolver {
         ));
     }
     
+    @UseGuards(GraphQLAuthGuard)
+    @Mutation(()=> UserProfileDto)
+    async UpdateUser(
+        @Args('updateUser') updateUserDto: UpdateUserDto,
+        @Context() context: { req: Request }   
+    )
+    : Promise<UserProfileDto> {
+        const userId = context.req.user?.sub!;
+        return this.commandBus.execute(new UpdateUserCommand(
+            userId,
+            updateUserDto.firstname,
+            updateUserDto.lastname,
+            updateUserDto.bio,
+            updateUserDto.avatarUrl,
+            updateUserDto.isPrivate,
+            updateUserDto.twoFactorEnabled,
+        ));
+    }
 }

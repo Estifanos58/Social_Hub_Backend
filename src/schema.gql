@@ -106,6 +106,7 @@ type MessageDto {
 type Mutation {
   GetUser(userId: String!): UserProfileDto!
   UnfollowUser(followingId: String!): String!
+  UpdateUser(updateUser: UpdateUserDto!): UserProfileDto!
   createPost(createPost: CreatePostDto!): String!
   deletePost(postId: String!): String!
   followUser(followingId: String!): String!
@@ -185,6 +186,15 @@ input RegisterDto {
   firstname: String!
   lastname: String!
   password: String!
+}
+
+input UpdateUserDto {
+  avatarUrl: String
+  bio: String
+  firstname: String
+  isPrivate: Boolean
+  lastname: String
+  twoFactorEnabled: Boolean
 }
 
 type UserDto {
