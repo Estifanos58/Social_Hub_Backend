@@ -3,12 +3,12 @@ import { ConfigModule } from "@nestjs/config"
 import { CqrsModule } from "@nestjs/cqrs"
 import { PrismaService } from "src/prisma.service"
 import { UserResolver } from "./user.resolver"
-import { FollowUserHandler, UnFollowUserHandler } from "./handlers"
+import { FollowUserHandler, GetUserHandler, UnFollowUserHandler, UpdateUserHandler } from "./handlers"
 import { JwtService } from "@nestjs/jwt"
 
 
-const CommandHandlers = [FollowUserHandler, UnFollowUserHandler]
-const QueryHandlers = []
+const CommandHandlers = [FollowUserHandler, UnFollowUserHandler, UpdateUserHandler]
+const QueryHandlers = [GetUserHandler]
 
 @Module({
     imports: [CqrsModule, ConfigModule],
