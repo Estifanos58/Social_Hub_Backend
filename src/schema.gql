@@ -70,6 +70,20 @@ type FollowerDto {
   id: String!
 }
 
+type GetPostType {
+  comments: [CommentDto!]
+  commentsCount: Int!
+  content: String!
+  createdAt: DateTime!
+  createdBy: UserDto
+  createdById: String!
+  id: String!
+  images: [PostImageDto!]
+  reactions: [ReactionDto!]
+  reactionsCount: Int!
+  updatedAt: DateTime!
+}
+
 input LoginDto {
   email: String!
   password: String!
@@ -140,6 +154,7 @@ type PostImageDto {
 }
 
 type Query {
+  getPost(postId: String!): GetPostType!
   getPosts(cursor: String!, take: Float!): PaginatedPostsDto!
   getme: UserResponse!
 }

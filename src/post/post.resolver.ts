@@ -7,7 +7,9 @@ import { Request } from "express";
 import { CreatePostCommand } from "./commands/createPost.command";
 import { DeletePostCommand } from "./commands/deletePost.command";
 import { PaginatedPostsDto } from "./types/paginatedPosts.type";
-import { GetPostsQuery } from "./query/GetPosts.query";
+import { GetPostType } from "./types/getPost.type";
+import { GetPostQuery } from "./query/getPost.query";
+import { GetPostsQuery } from "./query/getPosts.query"
 
 @Resolver()
 export class PostResolver {
@@ -44,4 +46,10 @@ export class PostResolver {
         return this.queryBus.execute(new GetPostsQuery(cursor, take))
     }
 
+    @Query(()=> GetPostType)
+    async getPost(
+        @Args('postId') postId: string
+    ): Promise<GetPostType> {
+        return this.queryBus.execute(new GetPostQuery(postId))
+    }
 }

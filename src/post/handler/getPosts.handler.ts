@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
 import { PrismaService } from "src/prisma.service";
-import { InternalServerErrorException } from "@nestjs/common";
-import { GetPostsQuery } from "../query/GetPosts.query";
+import { HttpException, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { GetPostsQuery } from "../query/getPosts.query";
 import { PaginatedPostsDto} from "../types/paginatedPosts.type";
 
 @QueryHandler(GetPostsQuery)
@@ -27,6 +27,8 @@ export class GetPostsHandler implements IQueryHandler<GetPostsQuery> {
         },
       });
 
+      if(!posts) throw new NotFoundException("No posts found");
+
       const hasMore = posts.length > take;
 
       const mappedPosts = (hasMore ? posts.slice(0, -1) : posts).map(
@@ -48,6 +50,7 @@ export class GetPostsHandler implements IQueryHandler<GetPostsQuery> {
         hasMore
       }
     } catch (error) {
+      if(error instanceof HttpException) throw error;
       throw new InternalServerErrorException("Failed to fetch posts");
     }
   }

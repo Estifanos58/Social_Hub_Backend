@@ -14,22 +14,22 @@ export class CommentDto {
   postId: string;
 
   @Field(() => PostDto, { nullable: true })
-  post?: PostDto;
+  post?: PostDto | null;
 
   @Field()
   createdById: string;
 
   @Field(() => UserDto, { nullable: true })
-  createdBy?: UserDto;
+  createdBy?: UserDto | null;
 
-  @Field({ nullable: true })
-  parentId?: string;
+  @Field(() => String, { nullable: true })
+  parentId?: string | null;
 
   @Field(() => CommentDto, { nullable: true })
-  parent?: CommentDto;
+  parent?: CommentDto | null;
 
   @Field(() => [CommentDto], { nullable: true })
-  replies?: CommentDto[];
+  replies?: CommentDto[] | null;
 
   @Field(() => GraphQLISODateTime)
   createdAt: Date;
@@ -38,5 +38,5 @@ export class CommentDto {
   updatedAt: Date;
 
   @Field(() => GraphQLISODateTime, { nullable: true })
-  deletedAt?: Date;
+  deletedAt?: Date | null;
 }
