@@ -4,6 +4,7 @@ import { CqrsModule } from "@nestjs/cqrs"
 import { PrismaService } from "src/prisma.service"
 import { UserResolver } from "./user.resolver"
 import { FollowUserHandler, UnFollowUserHandler } from "./handlers"
+import { JwtService } from "@nestjs/jwt"
 
 
 const CommandHandlers = [FollowUserHandler, UnFollowUserHandler]
@@ -11,7 +12,7 @@ const QueryHandlers = []
 
 @Module({
     imports: [CqrsModule, ConfigModule],
-    providers: [UserResolver, PrismaService, ...CommandHandlers, ...QueryHandlers],
+    providers: [UserResolver,JwtService, PrismaService, ...CommandHandlers, ...QueryHandlers],
 })
 
 export class UserModule {}

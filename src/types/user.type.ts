@@ -9,20 +9,20 @@ export class UserDto {
   @Field()
   firstname: string;
 
-  @Field({ nullable: true })
-  lastname?: string;
+  @Field(() => String, { nullable: true })
+  lastname?: string | null;
 
-  @Field({ nullable: true })
-  bio?: string;
+  @Field(() => String, { nullable: true })
+  bio?: string | null;
 
-  @Field({ nullable: true })
-  avatarUrl?: string;
+  @Field(() => String, { nullable: true })
+  avatarUrl?: string | null;
 
   @Field()
   email: string;
 
   @Field(() => GraphQLISODateTime, { nullable: true })
-  lastSeenAt?: Date;
+  lastSeenAt?: Date | null;
 
   @Field()
   verified: boolean;

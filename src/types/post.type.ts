@@ -1,5 +1,6 @@
 import { Field, ObjectType, GraphQLISODateTime } from '@nestjs/graphql';
 import { UserDto, CommentDto, ReactionDto  } from '.';
+import { PostImageDto } from './postImage.type';
 
 @ObjectType()
 export class PostDto {
@@ -9,8 +10,8 @@ export class PostDto {
   @Field()
   content: string;
 
-  @Field({ nullable: true })
-  imageUrl?: string | null;
+  @Field(() => [PostImageDto], {nullable: true})
+  images?: PostImageDto[] ;
 
   @Field(() => GraphQLISODateTime)
   createdAt: Date;
@@ -32,4 +33,5 @@ export class PostDto {
 
   @Field(() => [ReactionDto], { nullable: true })
   reactions?: ReactionDto[];
+
 }

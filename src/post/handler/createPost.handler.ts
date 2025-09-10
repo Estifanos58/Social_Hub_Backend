@@ -39,7 +39,9 @@ export class CreatePostHandler implements ICommandHandler<CreatePostCommand> {
         data: {
           createdById: userId,
           content,
-          imageUrls: validImageUrls,
+          images: {
+            create: validImageUrls.map((url) => ({ url })),
+          },
         },
       });
 

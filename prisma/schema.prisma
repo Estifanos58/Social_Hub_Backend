@@ -107,7 +107,6 @@ model Credential {
 model Post {
   id          String       @id @default(uuid())
   content     String
-  imageUrls   String[]     @db.VarChar(2048)   // Array of image URLs
 
   createdAt   DateTime     @default(now()) 
   updatedAt   DateTime     @updatedAt
@@ -115,11 +114,19 @@ model Post {
 
   createdById String
   createdBy   User         @relation("UserPosts", fields: [createdById], references: [id], onDelete: Cascade)
+  images      PostImage[]
 
   comments    Comment[]    @relation("PostComments")
   reactions   Reaction[]   @relation("PostReactions")
 
   @@index([createdById, deletedAt])
+}
+
+model PostImage {
+  id     String @id @default(cuid())
+  url    String
+  post   Post   @relation(fields: [postId], references: [id])
+  postId String
 }
 
 model Comment {

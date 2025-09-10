@@ -2,17 +2,99 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+"""Types of Roles in the chat room"""
+enum ChatRoomRole {
+  ADMIN
+  MEMBER
+  MODERATOR
+  OWNER
+}
+
+type ChatroomDto {
+  avatarUrl: String
+  createdAt: DateTime!
+  createdBy: UserDto
+  createdById: String!
+  deletedAt: DateTime
+  id: String!
+  isGroup: Boolean!
+  memberships: [ChatroomUserDto!]
+  messages: [MessageDto!]
+  name: String
+  updatedAt: DateTime!
+}
+
+type ChatroomUserDto {
+  chatroom: ChatroomDto
+  chatroomId: String!
+  id: String!
+  isMuted: Boolean!
+  joinedAt: DateTime!
+  lastReadAt: DateTime
+  role: ChatRoomRole!
+  user: UserDto
+  userId: String!
+}
+
+type CommentDto {
+  content: String!
+  createdAt: DateTime!
+  createdBy: UserDto
+  createdById: String!
+  deletedAt: DateTime
+  id: String!
+  parent: CommentDto
+  parentId: String
+  post: PostDto
+  postId: String!
+  replies: [CommentDto!]
+  updatedAt: DateTime!
+}
+
+input CreatePostDto {
+  content: String!
+  imageUrls: [String!]
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type FollowerDto {
+  createdAt: DateTime!
+  follower: UserDto
+  followerId: String!
+  following: UserDto
+  followingId: String!
+  id: String!
+}
 
 input LoginDto {
   email: String!
   password: String!
 }
 
+type MessageDto {
+  chatroom: ChatroomDto
+  chatroomId: String!
+  content: String
+  createdAt: DateTime!
+  deletedAt: DateTime
+  id: String!
+  imageUrl: String
+  isEdited: Boolean!
+  updatedAt: DateTime!
+  user: UserDto
+  userId: String!
+}
+
 type Mutation {
+  GetUser(userId: String!): UserProfileDto!
+  UnfollowUser(followingId: String!): String!
+  createPost(createPost: CreatePostDto!): String!
+  deletePost(postId: String!): String!
+  followUser(followingId: String!): String!
   forgotPassword(email: String!): String!
   login(loginInput: LoginDto!): UserResponse!
   logout: String!
@@ -21,8 +103,66 @@ type Mutation {
   verifyEmail(token: String!): UserResponse!
 }
 
+type PaginatedPostsDto {
+  hasMore: Boolean!
+  posts: [PostFeedDto!]!
+}
+
+type PostDto {
+  comments: [CommentDto!]
+  content: String!
+  createdAt: DateTime!
+  createdBy: UserDto
+  createdById: String!
+  deletedAt: DateTime
+  id: String!
+  images: [PostImageDto!]
+  reactions: [ReactionDto!]
+  updatedAt: DateTime!
+}
+
+type PostFeedDto {
+  commentsCount: Int!
+  content: String!
+  createdAt: DateTime!
+  createdBy: UserDto
+  createdById: String!
+  id: String!
+  images: [PostImageDto!]
+  reactionsCount: Int!
+  updatedAt: DateTime!
+}
+
+type PostImageDto {
+  id: String!
+  postId: String!
+  url: String!
+}
+
 type Query {
-  getuser: User!
+  getPosts(cursor: String!, take: Float!): PaginatedPostsDto!
+  getme: UserResponse!
+}
+
+type ReactionDto {
+  createdAt: DateTime!
+  createdBy: UserDto
+  createdById: String!
+  id: String!
+  post: PostDto
+  postId: String!
+  type: ReactionType!
+  updatedAt: DateTime!
+}
+
+"""Types of reactions a user can make on a post"""
+enum ReactionType {
+  ANGRY
+  HAHA
+  LIKE
+  LOVE
+  SAD
+  WOW
 }
 
 input RegisterDto {
@@ -32,19 +172,34 @@ input RegisterDto {
   password: String!
 }
 
-type User {
+type UserDto {
   avatarUrl: String
   bio: String
-  createdAt: DateTime
+  chatroomsCreated: [ChatroomDto!]
+  comments: [CommentDto!]
+  createdAt: DateTime!
   email: String!
-  firstname: String
-  id: String
-  isActive: Boolean
+  firstname: String!
+  followers: [FollowerDto!]
+  following: [FollowerDto!]
+  id: String!
+  isPrivate: Boolean!
   lastSeenAt: DateTime
   lastname: String
-  updatedAt: DateTime
+  memberships: [ChatroomUserDto!]
+  messages: [MessageDto!]
+  posts: [PostDto!]
+  reactions: [ReactionDto!]
+  updatedAt: DateTime!
+  verified: Boolean!
+}
+
+type UserProfileDto {
+  followersCount: Float
+  followingCount: Float
+  user: UserDto!
 }
 
 type UserResponse {
-  user: User
+  user: UserDto
 }

@@ -3,13 +3,14 @@ import { PostResolver } from "./post.resolver";
 import { CqrsModule } from "@nestjs/cqrs";
 import { ConfigModule } from "@nestjs/config";
 import { PrismaService } from "src/prisma.service";
-import { CreatePostHandler } from "./handler/createPost.handler";
+import { JwtService } from "@nestjs/jwt";
+import { CreatePostHandler, DeletePostHandler, GetPostsHandler } from "./handler";
 
-const CommandHandlers = [CreatePostHandler]
-const QueryHandler = []
+const CommandHandlers = [CreatePostHandler, DeletePostHandler]
+const QueryHandler = [GetPostsHandler]
 @Module({
     imports: [CqrsModule, ConfigModule],
-    providers: [PostResolver, PrismaService,  ...CommandHandlers, ...QueryHandler],
+    providers: [PostResolver, JwtService, PrismaService,  ...CommandHandlers, ...QueryHandler],
 })
 
 export class PostModule {}
