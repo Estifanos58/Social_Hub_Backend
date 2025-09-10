@@ -11,7 +11,7 @@ import { LoginCommand } from './commands/login.command';
 import { VerifiEmailCommand } from './commands/verifyEmail.command';
 import { ForgotPasswordCommand } from './commands/forgotPassword.command';
 import { ResetPasswordCommand } from './commands/resetPassword.command';
-import { UserDto } from 'src/types';
+
 
 @Resolver()
 export class AuthResolver {
