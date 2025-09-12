@@ -20,6 +20,9 @@ export class GraphQLAuthGuard implements CanActivate {
     const response: Response = gqlCtx.res;
     const token = request.cookies?.access_token;
 
+    // console.log("Token:", token);
+    // console.log('Request Cookies:', request.cookies);
+
     
     if (!token) {
       const refreshToken = request.cookies?.refreshToken;

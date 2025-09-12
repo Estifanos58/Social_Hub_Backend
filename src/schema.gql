@@ -51,6 +51,16 @@ type CommentDto {
   updatedAt: DateTime!
 }
 
+input CreateCommentDto {
+  content: String!
+  parentId: String
+  postId: String!
+}
+
+type CreateCommentResponse {
+  comment: CommentDto
+}
+
 input CreatePostDto {
   content: String!
   imageUrls: [String!]
@@ -107,6 +117,7 @@ type Mutation {
   GetUser(userId: String!): UserProfileDto!
   UnfollowUser(followingId: String!): String!
   UpdateUser(updateUser: UpdateUserDto!): UserProfileDto!
+  createComment(createCommentInput: CreateCommentDto!): CreateCommentResponse!
   createPost(createPost: CreatePostDto!): String!
   deletePost(postId: String!): String!
   followUser(followingId: String!): String!
@@ -157,7 +168,7 @@ type PostImageDto {
 type Query {
   getPost(postId: String!): GetPostType!
   getPosts(cursor: String!, take: Float!): PaginatedPostsDto!
-  getme: UserResponse!
+  getme: UserDto!
 }
 
 type ReactionDto {

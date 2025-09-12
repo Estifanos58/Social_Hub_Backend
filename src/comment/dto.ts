@@ -13,7 +13,7 @@ export class CreateCommentDto {
     @IsString({ message: 'AuthorId must be a string' })
     content: string;
 
-    @Field({ nullable: true })
+    @Field(()=> String ,{ nullable: true })
     @IsString({ message: 'ParentId must be a string' })
     @IsOptional()
     parentId?: string | null;

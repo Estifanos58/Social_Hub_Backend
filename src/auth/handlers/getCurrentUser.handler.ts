@@ -11,6 +11,8 @@ export class GetCurrentUserHandler implements IQueryHandler<GetCurrentUserQuery>
     async execute(query: GetCurrentUserQuery){
         const { userId } = query
 
+        console.log('UserID: ', userId)
+
         try {
             const user = await this.prismaService.user.findUnique({
                 where: {id: userId}
@@ -19,6 +21,8 @@ export class GetCurrentUserHandler implements IQueryHandler<GetCurrentUserQuery>
             if(!user) {
                 throw new NotFoundException('User Not Found')
             }
+
+            // console.log('Current User: ', user)
 
             return user;
         } catch (error) {

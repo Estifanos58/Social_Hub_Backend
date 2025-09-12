@@ -3,6 +3,7 @@ import { Args, Context, Mutation, Resolver } from "@nestjs/graphql";
 import { CreateCommentDto } from "./dto";
 import { CreateCommentCommand } from "./command/createComment.command";
 import { Request } from "express";
+import { CreateCommentResponse } from "./types/createComment.type";
 
 @Resolver()
 export class CommentResolver {
@@ -11,7 +12,7 @@ export class CommentResolver {
         private readonly queryBus: QueryBus,
     ) {}
 
-    @Mutation(() => Comment)
+    @Mutation(() => CreateCommentResponse)
     async createComment(
         @Args('createCommentInput') createCommentDto: CreateCommentDto,
         @Context() context: { req: Request }
