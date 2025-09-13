@@ -1,6 +1,6 @@
 import { UseGuards } from "@nestjs/common";
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
-import { Args, Context, Mutation, Resolver } from "@nestjs/graphql";
+import { Args, Context, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { UserResponse } from "src/auth/types";
 import { GraphQLAuthGuard } from "src/auth/graphql-auth.guard";
 import { FollowUserCommand } from "./commands/FollowUserCommand";
@@ -10,6 +10,7 @@ import { GetUserQuery } from "./query/GetUser.query";
 import { UserProfileDto } from "./types/getUser.type";
 import { UpdateUserDto } from "./dto";
 import { UpdateUserCommand } from "./commands/UpdateUserCommand";
+import { UserDto } from "src/types";
 
 @Resolver()
 export class UserResolver {
@@ -44,7 +45,7 @@ export class UserResolver {
 
 
     @UseGuards(GraphQLAuthGuard)
-    @Mutation(()=> UserProfileDto)
+    @Query(()=> UserProfileDto)
     async GetUser(
         @Args('userId') userId: string,
         @Context() context: { req: Request }   
@@ -57,12 +58,12 @@ export class UserResolver {
     }
     
     @UseGuards(GraphQLAuthGuard)
-    @Mutation(()=> UserProfileDto)
+    @Mutation(()=> UserDto)
     async UpdateUser(
         @Args('updateUser') updateUserDto: UpdateUserDto,
         @Context() context: { req: Request }   
     )
-    : Promise<UserProfileDto> {
+    : Promise<UserDto> {
         const userId = context.req.user?.sub!;
         return this.commandBus.execute(new UpdateUserCommand(
             userId,

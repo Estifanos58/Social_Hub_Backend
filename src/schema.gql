@@ -114,9 +114,8 @@ type MessageDto {
 }
 
 type Mutation {
-  GetUser(userId: String!): UserProfileDto!
   UnfollowUser(followingId: String!): String!
-  UpdateUser(updateUser: UpdateUserDto!): UserProfileDto!
+  UpdateUser(updateUser: UpdateUserDto!): UserDto!
   createComment(createCommentInput: CreateCommentDto!): CreateCommentResponse!
   createPost(createPost: CreatePostDto!): String!
   deletePost(postId: String!): String!
@@ -132,6 +131,13 @@ type Mutation {
 type PaginatedPostsDto {
   hasMore: Boolean!
   posts: [PostFeedDto!]!
+}
+
+type Post {
+  comments: Float!
+  id: String!
+  imageUrl: String!
+  likes: Float!
 }
 
 type PostDto {
@@ -166,6 +172,7 @@ type PostImageDto {
 }
 
 type Query {
+  GetUser(userId: String!): UserProfileDto!
   getPost(postId: String!): GetPostType!
   getPosts(cursor: String!, take: Float!): PaginatedPostsDto!
   getme: UserDto!
@@ -231,8 +238,9 @@ type UserDto {
 }
 
 type UserProfileDto {
-  followersCount: Float
-  followingCount: Float
+  followers: Float
+  following: Float
+  posts: [Post!]
   user: UserDto!
 }
 

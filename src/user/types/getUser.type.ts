@@ -7,12 +7,27 @@ export class UserProfileDto {
   user: UserDto
 
   @Field({ nullable: true })
-  followersCount?: number;
+  followers?: number;
 
   @Field({ nullable: true })
-  followingCount?: number;
+  following?: number;
+
+  @Field(() => [Post],{ nullable: true })
+  posts?: Post[];
 
   constructor(partial: Partial<UserProfileDto>) {
     Object.assign(this, partial);
   }
+}
+
+@ObjectType()
+class Post {
+  @Field()
+  id: string;
+  @Field()
+  imageUrl: string;
+  @Field()
+  likes: number;
+  @Field()
+  comments: number;
 }

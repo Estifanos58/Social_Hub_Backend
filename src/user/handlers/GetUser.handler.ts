@@ -6,32 +6,36 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { Post, User } from '@prisma/client';
 import { UserProfileDto } from '../types/getUser.type';
 
 @QueryHandler(GetUserQuery)
 export class GetUserHandler implements IQueryHandler<GetUserQuery> {
-  constructor(private readonly prismaService: PrismaService) {}
-  async execute(query: GetUserQuery): Promise<any> {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async execute(query: GetUserQuery): Promise<UserProfileDto> {
     const { userId, requesterId } = query;
 
     try {
-      const user = await this.prismaService.user.findUnique({
-        where: {
-          id: userId,
-        },
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
         include: {
-          posts: true,
+          posts: {
+            include: {
+              images: { take: 1 }, // grab first image
+              comments: true,
+              reactions: true,
+            },
+            orderBy: { createdAt: 'desc' },
+          },
         },
       });
 
       if (!user) throw new NotFoundException('User not found');
 
-      if (user.id === requesterId) {
-        return this.toUserProfile(user, true, this.prismaService);
-      }
-      if (user.isPrivate) {
-        const isFollowing = await this.prismaService.follower.findUnique({
+      // privacy logic
+      let canView = true;
+      if (user.id !== requesterId && user.isPrivate) {
+        const isFollowing = await this.prisma.follower.findUnique({
           where: {
             followerId_followingId: {
               followerId: requesterId,
@@ -39,51 +43,56 @@ export class GetUserHandler implements IQueryHandler<GetUserQuery> {
             },
           },
         });
-
-        if (!isFollowing) {
-          return this.toUserProfile(user, false, this.prismaService);
-        }
-
-        return this.toUserProfile(user, true, this.prismaService);
+        if (!isFollowing) canView = false;
       }
 
-      return this.toUserProfile(user, true, this.prismaService);
+      if (!canView) {
+        return this.buildUserProfile(user, false);
+      }
+
+      return this.buildUserProfile(user, true);
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw new InternalServerErrorException('Something went wrong');
     }
   }
 
-  private async toUserProfile(
-    user: User & { posts: Post[] },
+  private async buildUserProfile(
+    user: any,
     includeSensitive: boolean,
-    prismaService: PrismaService,
-  ): Promise<UserProfileDto> {
-    const followersCount = await prismaService.follower.count({
+  ): Promise<any> {
+    const followersCount = await this.prisma.follower.count({
       where: { followingId: user.id },
     });
 
-    const followingCount = await prismaService.follower.count({
+    const followingCount = await this.prisma.follower.count({
       where: { followerId: user.id },
     });
 
     return new UserProfileDto({
       user: {
         id: user.id,
+        avatarUrl: user.avatarUrl,
         firstname: user.firstname,
-        lastname: user.lastname || undefined,
+        lastname: user.lastname || '',
+        bio: user.bio || '',
         email: user.email,
-        bio: user.bio || undefined,
-        avatarUrl: user.avatarUrl || undefined,
-        verified: user.verified,
         isPrivate: user.isPrivate,
-        lastSeenAt: user.lastSeenAt || undefined,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
-        posts: includeSensitive ? user.posts : undefined,
+        verified: user.verified,
+        lastSeenAt: includeSensitive ? user.lastSeenAt : null,
       },
-      followersCount,
-      followingCount,
+      followers: followersCount,
+      following: followingCount,
+      posts: includeSensitive
+        ? user.posts.map((post) => ({
+            id: post.id,
+            imageUrl: post.images[0]?.url || null,
+            likes: post.reactions.length,
+            comments: post.comments.length,
+          }))
+        : [],
     });
   }
 }
