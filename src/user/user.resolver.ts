@@ -11,6 +11,8 @@ import { UserProfileDto } from "./types/getUser.type";
 import { UpdateUserDto } from "./dto";
 import { UpdateUserCommand } from "./commands/UpdateUserCommand";
 import { UserDto } from "src/types";
+import { GetUsersToFollowDto } from "./types/getUsersToFollow.type";
+import { GetUsersToFollowQuery } from "./query/GetUsersToFollow.query";
 
 @Resolver()
 export class UserResolver {
@@ -55,6 +57,17 @@ export class UserResolver {
             userId,
             context.req.user?.sub!
         ));
+    }
+
+    @UseGuards(GraphQLAuthGuard)
+    @Query(()=> GetUsersToFollowDto)
+    async GetUsersToFollow(
+        @Args('limit') limit: number,
+        @Args('offset') offset: number,
+        @Context() context: { req: Request }
+    ): Promise<GetUsersToFollowDto> {
+        const userId = context.req.user?.sub!;
+        return this.queryBus.execute(new GetUsersToFollowQuery(userId, limit, offset));
     }
     
     @UseGuards(GraphQLAuthGuard)
