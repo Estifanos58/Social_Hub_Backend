@@ -80,6 +80,17 @@ type FollowerDto {
   id: String!
 }
 
+type GetFollowersDto {
+  totalFollowers: Float
+  totalFollowing: Float
+  users: [UserDto!]
+}
+
+input GetFollowersInput {
+  skip: Int
+  take: Int
+}
+
 type GetPostType {
   comments: [CommentDto!]
   commentsCount: Int!
@@ -92,6 +103,11 @@ type GetPostType {
   reactions: [ReactionDto!]
   reactionsCount: Int!
   updatedAt: DateTime!
+}
+
+input GetUsersToFollow {
+  limit: Int
+  offset: Int
 }
 
 type GetUsersToFollowDto {
@@ -177,8 +193,10 @@ type PostImageDto {
 }
 
 type Query {
+  GetFollowers(getFollowers: GetFollowersInput!): GetFollowersDto!
+  GetFollowing(getFollowing: GetFollowersInput!): GetFollowersDto!
   GetUser(userId: String!): UserProfileDto!
-  GetUsersToFollow(limit: Float!, offset: Float!): GetUsersToFollowDto!
+  GetUsersToFollow(getUsersToFollow: GetUsersToFollow!): GetUsersToFollowDto!
   getPost(postId: String!): GetPostType!
   getPosts(cursor: String!, take: Float!): PaginatedPostsDto!
   getme: UserDto!

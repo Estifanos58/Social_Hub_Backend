@@ -1,4 +1,4 @@
-import { Field, InputType } from "@nestjs/graphql";
+import { Field, InputType, Int } from "@nestjs/graphql";
 import { IsBoolean, IsOptional, IsString } from "class-validator";
 
 @InputType()
@@ -33,4 +33,26 @@ export class UpdateUserDto {
   @IsOptional()
   @IsBoolean({ message: 'twoFactorEnabled must be a boolean' })
   twoFactorEnabled?: boolean;
+}
+
+@InputType()
+export class GetUsersToFollow {
+  @Field(()=> Int, { nullable: true })
+  @IsOptional()
+  limit?:  number;
+
+  @Field(()=> Int, { nullable: true })
+  @IsOptional()
+  offset?: number;
+}
+
+@InputType()
+export class GetFollowersInput {
+  @Field(()=> Int, { nullable: true })
+  @IsOptional()
+  take?: number;
+
+  @Field(()=> Int, { nullable: true })
+  @IsOptional()
+  skip?: number;
 }

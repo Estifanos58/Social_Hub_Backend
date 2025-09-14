@@ -8,11 +8,14 @@ import { Request } from "express";
 import { UnFollowUserCommand } from "./commands/UnFollowUserCommand";
 import { GetUserQuery } from "./query/GetUser.query";
 import { UserProfileDto } from "./types/getUser.type";
-import { UpdateUserDto } from "./dto";
+import { GetFollowersInput, GetUsersToFollow, UpdateUserDto } from "./dto";
 import { UpdateUserCommand } from "./commands/UpdateUserCommand";
 import { UserDto } from "src/types";
 import { GetUsersToFollowDto } from "./types/getUsersToFollow.type";
 import { GetUsersToFollowQuery } from "./query/GetUsersToFollow.query";
+import { GetFollowersDto } from "./types/getFollow.type";
+import { GetFollowersQuery } from "./query/GetFollowers.query";
+import { GetFollowingQuery } from "./query/GetFollowing.query";
 
 @Resolver()
 export class UserResolver {
@@ -62,12 +65,11 @@ export class UserResolver {
     @UseGuards(GraphQLAuthGuard)
     @Query(()=> GetUsersToFollowDto)
     async GetUsersToFollow(
-        @Args('limit') limit: number,
-        @Args('offset') offset: number,
+        @Args('getUsersToFollow') getUsersToFollow: GetUsersToFollow,
         @Context() context: { req: Request }
     ): Promise<GetUsersToFollowDto> {
         const userId = context.req.user?.sub!;
-        return this.queryBus.execute(new GetUsersToFollowQuery(userId, limit, offset));
+        return this.queryBus.execute(new GetUsersToFollowQuery(userId, getUsersToFollow.limit, getUsersToFollow.offset));
     }
     
     @UseGuards(GraphQLAuthGuard)
@@ -87,5 +89,25 @@ export class UserResolver {
             updateUserDto.isPrivate,
             updateUserDto.twoFactorEnabled,
         ));
+    }
+
+    @UseGuards(GraphQLAuthGuard)
+    @Query(()=> GetFollowersDto)
+    async GetFollowers(
+        @Args('getFollowers') getFollowers: GetFollowersInput,
+        @Context() context: { req: Request },
+    ): Promise<GetFollowersDto> {
+        const userId = context.req.user?.sub!;
+        return this.queryBus.execute(new GetFollowersQuery(userId, getFollowers.take, getFollowers.skip));
+    }
+
+    @UseGuards(GraphQLAuthGuard)
+    @Query(()=> GetFollowersDto)
+    async GetFollowing(
+        @Args('getFollowing') getFollowing: GetFollowersInput,
+        @Context() context: { req: Request },
+    ): Promise<GetFollowersDto> {
+        const userId = context.req.user?.sub!;
+        return this.queryBus.execute(new GetFollowingQuery(userId, getFollowing.take, getFollowing.skip));
     }
 }
