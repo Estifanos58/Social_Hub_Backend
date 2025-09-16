@@ -12,6 +12,9 @@ export class GetFollowersDto {
     @Field({ nullable: true })
     totalFollowing: number;
 
+    @Field({ nullable: true })
+    hasMore?: boolean;
+
     constructor(partial: Partial<GetFollowersDto>) {
         Object.assign(this, partial);
     }

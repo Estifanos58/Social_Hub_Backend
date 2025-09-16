@@ -1,8 +1,8 @@
-import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
-import { HttpException, InternalServerErrorException } from "@nestjs/common";
-import { PrismaService } from "src/prisma.service";
-import { GetFollowingQuery } from "../query/GetFollowing.query";
-import { GetFollowersDto } from "../types/getFollow.type";
+import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { HttpException, InternalServerErrorException } from '@nestjs/common';
+import { PrismaService } from 'src/prisma.service';
+import { GetFollowingQuery } from '../query/GetFollowing.query';
+import { GetFollowersDto } from '../types/getFollow.type';
 
 @QueryHandler(GetFollowingQuery)
 export class GetFollowingHandler implements IQueryHandler<GetFollowingQuery> {
@@ -14,25 +14,32 @@ export class GetFollowingHandler implements IQueryHandler<GetFollowingQuery> {
     try {
       const [totalFollowers, totalFollowing, users] = await Promise.all([
         this.prismaService.follower.count({
-          where: { followingId: userId }, 
+          where: { followingId: userId },
         }),
         this.prismaService.follower.count({
           where: { followerId: userId },
         }),
         this.prismaService.follower.findMany({
-          where: { followerId: userId }, 
+          where: { followerId: userId },
           skip,
-          take,
+          take: take + 1,
           include: {
-            following: true, 
+            following: true,
           },
         }),
       ]);
 
-      return new GetFollowersDto({ users: users.map(f => f.following), totalFollowers, totalFollowing });
+      const hasMore = users.length > take;
+
+      return new GetFollowersDto({
+        users: users.map((f) => (f.following)).slice(0, take),
+        totalFollowers,
+        totalFollowing,
+        hasMore
+      });
     } catch (error) {
       if (error instanceof HttpException) throw error;
-      throw new InternalServerErrorException("Server Error Happened");
+      throw new InternalServerErrorException('Server Error Happened');
     }
   }
 }

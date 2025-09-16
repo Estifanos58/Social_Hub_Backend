@@ -22,17 +22,20 @@ export class GetFollowersHandler implements IQueryHandler<GetFollowersQuery> {
         this.prismaService.follower.findMany({
           where: { followingId: userId },
           skip,
-          take,
+          take: take + 1,
           include: {
             follower: true, 
           },
         }),
       ]);
 
+      const hasMore = users.length > take;
+
       return new GetFollowersDto({
-        users: users.map((f) => (f.follower)),
+        users: users.map((f) => (f.follower)).slice(0, take),
         totalFollowers,
         totalFollowing,
+        hasMore
       });
       
     } catch (error) {
