@@ -48,7 +48,20 @@ type CommentDto {
   post: PostDto
   postId: String!
   replies: [CommentDto!]
+  repliesHasNextPage: Boolean
+  replyCount: Float
   updatedAt: DateTime!
+}
+
+type CommentEdgeDto {
+  cursor: String!
+  node: CommentDto!
+}
+
+type CommentRepliesConnectionDto {
+  edges: [CommentEdgeDto!]!
+  pageInfo: PageInfoDto!
+  totalCount: Int!
 }
 
 input CreateCommentDto {
@@ -150,6 +163,11 @@ type Mutation {
   verifyEmail(token: String!): UserResponse!
 }
 
+type PageInfoDto {
+  endCursor: String
+  hasNextPage: Boolean!
+}
+
 type PaginatedPostsDto {
   hasMore: Boolean!
   posts: [PostFeedDto!]!
@@ -160,6 +178,12 @@ type Post {
   id: String!
   imageUrl: String!
   likes: Float!
+}
+
+type PostCommentsConnectionDto {
+  edges: [CommentEdgeDto!]!
+  pageInfo: PageInfoDto!
+  totalCount: Int!
 }
 
 type PostDto {
@@ -198,9 +222,11 @@ type Query {
   GetFollowing(getFollowing: GetFollowersInput!): GetFollowersDto!
   GetUser(userId: String!): UserProfileDto!
   GetUsersToFollow(getUsersToFollow: GetUsersToFollow!): GetUsersToFollowDto!
+  commentReplies(after: String, commentId: String!, first: Int, includeChildren: Boolean, secondLevelLimit: Int): CommentRepliesConnectionDto!
   getPost(postId: String!): GetPostType!
   getPosts(cursor: String!, take: Float!): PaginatedPostsDto!
   getme: UserDto!
+  postComments(after: String, directRepliesLimit: Int, first: Int, postId: String!, secondLevelLimit: Int): PostCommentsConnectionDto!
 }
 
 type ReactionDto {

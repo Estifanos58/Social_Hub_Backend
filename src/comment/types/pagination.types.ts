@@ -3,7 +3,7 @@ import { CommentDto } from 'src/types/comment.type';
 
 @ObjectType()
 export class PageInfoDto {
-  @Field({ nullable: true })
+  @Field(()=> String, { nullable: true })
   endCursor?: string | null;
 
   @Field(() => Boolean)
