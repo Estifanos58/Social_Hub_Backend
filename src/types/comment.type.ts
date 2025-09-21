@@ -31,6 +31,14 @@ export class CommentDto {
   @Field(() => [CommentDto], { nullable: true })
   replies?: CommentDto[] | null;
 
+  // number of direct (non-deleted) replies for pagination UX
+  @Field(() => Number, { nullable: true })
+  replyCount?: number | null;
+
+  // indicates if there are more replies beyond those currently fetched
+  @Field(() => Boolean, { nullable: true })
+  repliesHasNextPage?: boolean | null;
+
   @Field(() => GraphQLISODateTime)
   createdAt: Date;
 
