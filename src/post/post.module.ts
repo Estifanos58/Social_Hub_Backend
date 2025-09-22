@@ -5,13 +5,14 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaService } from 'src/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import {
+  AddReactionHandler,
   CreatePostHandler,
   DeletePostHandler,
   GetPostHandler,
   GetPostsHandler,
 } from './handler';
 
-const CommandHandlers = [CreatePostHandler, DeletePostHandler];
+const CommandHandlers = [CreatePostHandler, DeletePostHandler, AddReactionHandler];
 const QueryHandler = [GetPostsHandler, GetPostHandler];
 @Module({
   imports: [CqrsModule, ConfigModule],

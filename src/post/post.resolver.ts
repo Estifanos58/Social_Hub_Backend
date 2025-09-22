@@ -10,6 +10,7 @@ import { PaginatedPostsDto } from "./types/paginatedPosts.type";
 import { GetPostType } from "./types/getPost.type";
 import { GetPostQuery } from "./query/getPost.query";
 import { GetPostsQuery } from "./query/getPosts.query"
+import { AddReactionCommand } from "./commands/addReaction.command";
 
 @Resolver()
 export class PostResolver {
@@ -51,5 +52,17 @@ export class PostResolver {
         @Args('postId') postId: string
     ): Promise<GetPostType> {
         return this.queryBus.execute(new GetPostQuery(postId))
+    }
+
+
+    @Mutation(()=> Boolean)
+    @UseGuards(GraphQLAuthGuard)
+    async addReaction(
+        @Args('postId') postId: string,
+        @Args('type') type: 'LIKE' | 'LOVE' | 'HAHA' | 'WOW' | 'SAD',
+        @Context() context: { req: Request}
+    ): Promise<boolean> {
+        const userId = context.req.user?.sub!;
+        return this.commandBus.execute(new AddReactionCommand(userId, postId, type))
     }
 }

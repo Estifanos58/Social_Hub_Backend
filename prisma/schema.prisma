@@ -19,7 +19,6 @@ enum ReactionType {
   HAHA
   WOW
   SAD
-  ANGRY
 }
 
 enum ChatroomRole {

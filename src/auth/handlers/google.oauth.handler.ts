@@ -108,6 +108,7 @@ export class GoogleOAuthHandler implements ICommandHandler<GoogleOAuthCommand> {
 
       return response.data;
     } catch (error) {
+      console.log("Error: ", error.message, error)
       throw new HttpException('Failed to fetch Google user', 400);
     }
   }

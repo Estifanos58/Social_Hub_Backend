@@ -83,6 +83,7 @@ export class GithubOAuthHandler implements ICommandHandler<GithubOAuthCommand> {
       console.log("GitHub OAuth token response:", response.data);
       return response.data;
     } catch (error) {
+      console.log("Error: ",error)
       throw new Error(`Failed to fetch GitHub OAuth tokens: ${error.message}`);
     }
   }

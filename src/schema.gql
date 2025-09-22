@@ -151,6 +151,7 @@ type MessageDto {
 type Mutation {
   UnfollowUser(followingId: String!): String!
   UpdateUser(updateUser: UpdateUserDto!): UserDto!
+  addReaction(postId: String!, type: String!): Boolean!
   createComment(createCommentInput: CreateCommentDto!): CreateCommentResponse!
   createPost(createPost: CreatePostDto!): String!
   deletePost(postId: String!): String!
