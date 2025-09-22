@@ -11,6 +11,7 @@ import { GetPostType } from "./types/getPost.type";
 import { GetPostQuery } from "./query/getPost.query";
 import { GetPostsQuery } from "./query/getPosts.query"
 import { AddReactionCommand } from "./commands/addReaction.command";
+import { RemoveReactionCommand } from "./commands/removeReaction.command";
 
 @Resolver()
 export class PostResolver {
@@ -39,12 +40,15 @@ export class PostResolver {
         return this.commandBus.execute(new DeletePostCommand(postId, userId))
     }
 
+    @UseGuards(GraphQLAuthGuard)
     @Query(()=>PaginatedPostsDto)
     async getPosts(
         @Args('take') take: number,
         @Args('cursor') cursor?: string,
+        @Context() context?: { req: Request}
     ): Promise<PaginatedPostsDto> {
-        return this.queryBus.execute(new GetPostsQuery(cursor, take))
+        const userId = context?.req?.user?.sub;
+        return this.queryBus.execute(new GetPostsQuery(cursor, take, userId))
     }
 
     @Query(()=> GetPostType)
@@ -64,5 +68,15 @@ export class PostResolver {
     ): Promise<boolean> {
         const userId = context.req.user?.sub!;
         return this.commandBus.execute(new AddReactionCommand(userId, postId, type))
+    }
+
+    @Mutation(()=> Boolean)
+    @UseGuards(GraphQLAuthGuard)
+    async removeReaction(
+        @Args('postId') postId: string,
+        @Context() context: { req: Request}
+    ): Promise<boolean> {
+        const userId = context.req.user?.sub!;
+        return this.commandBus.execute(new RemoveReactionCommand(postId, userId));
     }
 }

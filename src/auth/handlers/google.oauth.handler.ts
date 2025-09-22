@@ -65,15 +65,25 @@ export class GoogleOAuthHandler implements ICommandHandler<GoogleOAuthCommand> {
 
     res.redirect(this.configService.get('CLIENT_URL') || 'http://localhost:3000');
     } catch (error) {
+      console.log("Error Google OAuth: ", error)
          if(error instanceof HttpException) {
                 throw error;
               }
-              throw new InternalServerErrorException("Internal Server Error")
+        throw new InternalServerErrorException("Internal Server Error")
     }
   }
 
   private async getGoogleOAuthTokens(code: string): Promise<any> {
     try {
+
+
+      console.log("Token exchange request:", {
+  code,
+  client_id: this.configService.get('GOOGLE_CLIENT_ID'),
+  redirect_uri: this.configService.get('GOOGLE_REDIRECT_URL'),
+});
+
+
       const url = 'https://oauth2.googleapis.com/token';
       const values = {
         code,
@@ -93,6 +103,7 @@ export class GoogleOAuthHandler implements ICommandHandler<GoogleOAuthCommand> {
 
       return response.data;
     } catch (error) {
+      console.error("Google token exchange error:", error.response?.data || error.message);
       throw new HttpException('Failed to fetch Google OAuth tokens', 400);
     }
   }

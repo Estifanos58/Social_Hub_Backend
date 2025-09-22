@@ -27,4 +27,7 @@ export class PostFeedDto extends PickType(PostDto, [
 
   @Field(() => Int)
   reactionsCount: number;
+
+  @Field(() => String, { nullable: true })
+  userReaction?: string | null; // Assuming reactions are stored as an array of strings
 }

@@ -14,11 +14,11 @@ export class ForgotPasswordHandler implements ICommandHandler<ForgotPasswordComm
     ){}
 
     async execute(command: ForgotPasswordCommand): Promise<any> {
-        const {email, userId} = command
+        const {email} = command
 
         try {
-            const credential =  await this.prismaService.credential.findUnique({
-                where : {userId, user: { email }},
+            const credential =  await this.prismaService.credential.findFirst({
+                where : {user : { email }},
                 include: { user: true}
             })
 
@@ -34,7 +34,7 @@ export class ForgotPasswordHandler implements ICommandHandler<ForgotPasswordComm
             }
 
             await this.prismaService.credential.update({
-                where: {userId},
+                where: { id: credential.id },
                 data: {
                     resetToken: token,
                     resetTokenExpiry: tokenExpriresAt

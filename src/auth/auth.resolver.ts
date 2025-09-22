@@ -60,14 +60,12 @@ export class AuthResolver {
         ));
     }
 
-    @UseGuards(GraphQLAuthGuard)
+    // @UseGuards(GraphQLAuthGuard)
     @Mutation(()=> String)
     async forgotPassword(
         @Args('email') email: string,
-        @Context() context: { req: Request }
     ){
-        const userId = context.req.user?.sub!;
-        return this.commandBus.execute(new ForgotPasswordCommand(email, userId));
+        return this.commandBus.execute(new ForgotPasswordCommand(email));
     }
 
     @UseGuards(GraphQLAuthGuard)

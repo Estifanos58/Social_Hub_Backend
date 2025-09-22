@@ -9,7 +9,8 @@ export class GetPostsHandler implements IQueryHandler<GetPostsQuery> {
   constructor(private readonly prisma: PrismaService) {}
 
   async execute(query: GetPostsQuery): Promise<PaginatedPostsDto> {
-    const { cursor, take } = query;
+    const { cursor, take, userId } = query;
+    console.log(`Executing GetPostsHandler with userId: ${userId}`);
 
     try {
       const posts = await this.prisma.post.findMany({
@@ -21,6 +22,7 @@ export class GetPostsHandler implements IQueryHandler<GetPostsQuery> {
         include: {
           createdBy: true,
           images: true,
+          reactions: true,
           _count: {
             select: { comments: true, reactions: true },
           },
@@ -30,6 +32,8 @@ export class GetPostsHandler implements IQueryHandler<GetPostsQuery> {
       if(!posts) throw new NotFoundException("No posts found");
 
       const hasMore = posts.length > take;
+
+      console.log(`Fetched POSTS ${posts}`);
 
       const mappedPosts = (hasMore ? posts.slice(0, -1) : posts).map(
         (post) => ({
@@ -42,8 +46,11 @@ export class GetPostsHandler implements IQueryHandler<GetPostsQuery> {
           images: post.images,
           commentsCount: post._count.comments,
           reactionsCount: post._count.reactions,
+          userReaction: userId ? post.reactions.find(r => r.createdById === userId)?.type || null : null,
         })
       );
+
+      console.log(`Fetched MAPPEDPOSTS ${mappedPosts}`);
 
       return {
         posts: mappedPosts,

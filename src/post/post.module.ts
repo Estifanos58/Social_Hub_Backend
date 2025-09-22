@@ -10,9 +10,10 @@ import {
   DeletePostHandler,
   GetPostHandler,
   GetPostsHandler,
+  RemoveReactionHandler,
 } from './handler';
 
-const CommandHandlers = [CreatePostHandler, DeletePostHandler, AddReactionHandler];
+const CommandHandlers = [CreatePostHandler, DeletePostHandler, AddReactionHandler, RemoveReactionHandler];
 const QueryHandler = [GetPostsHandler, GetPostHandler];
 @Module({
   imports: [CqrsModule, ConfigModule],

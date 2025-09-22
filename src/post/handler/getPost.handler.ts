@@ -11,7 +11,7 @@ export class GetPostHandler implements IQueryHandler<GetPostQuery> {
     ){}
     async execute(query: GetPostQuery): Promise<GetPostType> {
         try {
-            const {postId} = query;
+            const {postId, userId} = query;
 
             const post = await this.prismaService.post.findUnique({
                 where: {
@@ -27,8 +27,9 @@ export class GetPostHandler implements IQueryHandler<GetPostQuery> {
                     }
                 }
             });
-
             if(!post) throw new NotFoundException("Post not found");
+
+            const userReaction = userId ? post.reactions.find(r => r.createdById === userId) : null;
 
             const mappedPost: GetPostType = {
                 id: post.id,
@@ -41,7 +42,8 @@ export class GetPostHandler implements IQueryHandler<GetPostQuery> {
                 comments: post.comments,
                 reactions: post.reactions,
                 commentsCount: post._count.comments,
-                reactionsCount: post._count.reactions
+                reactionsCount: post._count.reactions,
+                userReaction: userReaction ? userReaction.type as string : null
             };
             return mappedPost;
         } catch (error) {

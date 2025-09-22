@@ -117,6 +117,7 @@ type GetPostType {
   reactions: [ReactionDto!]
   reactionsCount: Int!
   updatedAt: DateTime!
+  userReaction: String
 }
 
 input GetUsersToFollow {
@@ -160,6 +161,7 @@ type Mutation {
   login(loginInput: LoginDto!): UserResponse!
   logout: String!
   register(registerInput: RegisterDto!): UserResponse!
+  removeReaction(postId: String!): Boolean!
   resetPassword(newPassword: String!, token: String!): UserResponse!
   verifyEmail(token: String!): UserResponse!
 }
@@ -210,6 +212,7 @@ type PostFeedDto {
   images: [PostImageDto!]
   reactionsCount: Int!
   updatedAt: DateTime!
+  userReaction: String
 }
 
 type PostImageDto {

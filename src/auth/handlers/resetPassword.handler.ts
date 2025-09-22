@@ -17,12 +17,12 @@ export class ResetPasswordHandler implements ICommandHandler<ResetPasswordComman
         private readonly eventEmitter: EventEmitter2,
     ){}
     async execute(command: ResetPasswordCommand): Promise<any> {
-        const {userId, resetToken, newPassword, response} = command
+        const { resetToken, newPassword, response} = command
 
         try {
             
-            const credential = await this.prismaService.credential.findUnique({
-                where: {userId, resetToken},
+            const credential = await this.prismaService.credential.findFirst({
+                where: {resetToken},
                 include: { user: true}
             })
 
@@ -32,7 +32,7 @@ export class ResetPasswordHandler implements ICommandHandler<ResetPasswordComman
             const hashedPassword = await bcrypt.hash(newPassword, 10);
 
             await this.prismaService.credential.update({
-                where: {userId},
+                where: { id: credential.id },
                 data: {
                     passwordHash: hashedPassword,
                     resetToken: null,
