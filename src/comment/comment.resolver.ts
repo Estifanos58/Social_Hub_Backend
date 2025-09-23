@@ -7,6 +7,8 @@ import { CreateCommentResponse } from "./types/createComment.type";
 import { GetPostCommentsQuery } from './query/getPostComments.query';
 import { GetCommentRepliesQuery } from './query/getCommentReplies.query';
 import { PostCommentsConnectionDto, CommentRepliesConnectionDto } from './types/pagination.types';
+import { UseGuards } from "@nestjs/common";
+import { GraphQLAuthGuard } from "src/auth/graphql-auth.guard";
 
 @Resolver()
 export class CommentResolver {
@@ -15,6 +17,7 @@ export class CommentResolver {
         private readonly queryBus: QueryBus,
     ) {}
 
+    @UseGuards(GraphQLAuthGuard)
     @Mutation(() => CreateCommentResponse)
     async createComment(
         @Args('createCommentInput') createCommentDto: CreateCommentDto,
