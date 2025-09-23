@@ -3,12 +3,12 @@ import { Args, Context, Mutation, Query, Resolver, Int } from "@nestjs/graphql";
 import { CreateCommentDto } from "./dto";
 import { CreateCommentCommand } from "./command/createComment.command";
 import { Request } from "express";
-import { CreateCommentResponse } from "./types/createComment.type";
 import { GetPostCommentsQuery } from './query/getPostComments.query';
 import { GetCommentRepliesQuery } from './query/getCommentReplies.query';
 import { PostCommentsConnectionDto, CommentRepliesConnectionDto } from './types/pagination.types';
 import { UseGuards } from "@nestjs/common";
 import { GraphQLAuthGuard } from "src/auth/graphql-auth.guard";
+import { CommentDto } from "src/types";
 
 @Resolver()
 export class CommentResolver {
@@ -18,7 +18,7 @@ export class CommentResolver {
     ) {}
 
     @UseGuards(GraphQLAuthGuard)
-    @Mutation(() => CreateCommentResponse)
+    @Mutation(() => CommentDto)
     async createComment(
         @Args('createCommentInput') createCommentDto: CreateCommentDto,
         @Context() context: { req: Request }
