@@ -162,6 +162,33 @@ type Mutation {
   verifyEmail(token: String!): UserResponse!
 }
 
+type NotificationDto {
+  actor: UserDto
+  actorId: String
+  comment: CommentDto
+  commentId: String
+  createdAt: DateTime!
+  id: String!
+  isRead: Boolean!
+  post: PostDto
+  postId: String
+  reaction: ReactionDto
+  reactionId: String
+  readAt: DateTime
+  recipient: UserDto
+  recipientId: String!
+  type: NotificationType!
+}
+
+enum NotificationType {
+  COMMENT_ON_POST
+  LOGIN
+  NEW_FOLLOWER
+  POST_DELETED
+  REACTION_ON_POST
+  REPLY_ON_COMMENT
+}
+
 type PageInfoDto {
   endCursor: String
   hasNextPage: Boolean!
@@ -226,7 +253,9 @@ type Query {
   getPost(postId: String!): GetPostType!
   getPosts(cursor: String!, take: Float!): PaginatedPostsDto!
   getme: UserDto!
+  notifications(cursor: String, take: Int): [NotificationDto!]!
   postComments(after: String, directRepliesLimit: Int, first: Int, postId: String!, secondLevelLimit: Int): PostCommentsConnectionDto!
+  unreadNotificationsCount: Int!
 }
 
 type ReactionDto {
