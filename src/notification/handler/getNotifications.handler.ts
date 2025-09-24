@@ -8,7 +8,7 @@ export class GetNotificationsHandler implements IQueryHandler<GetNotificationsQu
 
   async execute(query: GetNotificationsQuery) {
     const { userId, take = 20, cursor } = query;
-    return this.prisma.notification.findMany({
+    const notifications = await this.prisma.notification.findMany({
       where: { recipientId: userId },
       take,
       skip: cursor ? 1 : 0,
@@ -26,5 +26,16 @@ export class GetNotificationsHandler implements IQueryHandler<GetNotificationsQu
         reaction: true,
       },
     });
+
+    // Mark all unread notifications in this batch as read (fire and forget)
+    const unreadIds = notifications.filter(n => !n.isRead).map(n => n.id);
+    if (unreadIds.length > 0) {
+      this.prisma.notification.updateMany({
+        where: { id: { in: unreadIds }, recipientId: userId, isRead: false },
+        data: { isRead: true, readAt: new Date() },
+      }).catch(() => {}); // ignore errors
+    }
+
+    return notifications;
   }
 }
