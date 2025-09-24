@@ -23,6 +23,8 @@ import {
   VerificationTokenEventHandler,
 } from './event';
 import { GithubOAuthHandler } from './handlers/github.oauth.handler';
+import { NotificationModule } from 'src/notification/notification.module';
+import { LoginEventHandler } from './event/login.event.handler';
 
 const CommandHandlers = [
   RegisterHandler,
@@ -37,12 +39,13 @@ const EventHandlers = [
   VerificationTokenEventHandler,
   EmailConfirmedEventHandler,
   ForgotPasswordEventHandler,
-  ResetPasswordEventHandler
+  ResetPasswordEventHandler,
+  LoginEventHandler,
 ];
 const QueryHandlers = [GetCurrentUserHandler];
 
 @Module({
-  imports: [CqrsModule, HttpModule, ConfigModule, MailModule],
+  imports: [CqrsModule, HttpModule, ConfigModule, MailModule, NotificationModule],
   controllers: [AuthController],
   providers: [
     AuthResolver,

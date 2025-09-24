@@ -5,14 +5,17 @@ import { PrismaService } from "src/prisma.service"
 import { UserResolver } from "./user.resolver"
 import { FollowUserHandler, GetFollowersHandler, GetFollowingHandler, GetUserHandler, GetUsersToFollowHandler, UnFollowUserHandler, UpdateUserHandler } from "./handlers"
 import { JwtService } from "@nestjs/jwt"
+import { NotificationModule } from "src/notification/notification.module"
+import { NewFollowerEventHandler } from "./event"
 
 
 const CommandHandlers = [FollowUserHandler, UnFollowUserHandler, UpdateUserHandler]
+const EventHandlers = [NewFollowerEventHandler]
 const QueryHandlers = [GetUserHandler, GetUsersToFollowHandler, GetFollowersHandler, GetFollowingHandler]
 
 @Module({
-    imports: [CqrsModule, ConfigModule],
-    providers: [UserResolver,JwtService, PrismaService, ...CommandHandlers, ...QueryHandlers],
+    imports: [CqrsModule, ConfigModule, NotificationModule],
+    providers: [UserResolver,JwtService, PrismaService, ...CommandHandlers, ...QueryHandlers, ...EventHandlers],
 })
 
 export class UserModule {}

@@ -242,7 +242,6 @@ type ReactionDto {
 
 """Types of reactions a user can make on a post"""
 enum ReactionType {
-  ANGRY
   HAHA
   LIKE
   LOVE

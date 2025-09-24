@@ -7,10 +7,15 @@ import {
   InternalServerErrorException, 
   NotFoundException 
 } from "@nestjs/common";
+import { EventEmitter2 } from "@nestjs/event-emitter";
+import { NewFollowerEvent } from "../event/newFollower.event";
 
 @CommandHandler(FollowUserCommand)
 export class FollowUserHandler implements ICommandHandler<FollowUserCommand> {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
 
   async execute(command: FollowUserCommand): Promise<any> {
     const { userId, followingId } = command;
@@ -48,6 +53,9 @@ export class FollowUserHandler implements ICommandHandler<FollowUserCommand> {
           followingId,
         },
       });
+
+      // Fire and forget event
+      this.eventEmitter.emit('user.followed', new NewFollowerEvent(userId, followingId));
 
       return "User started following";
     } catch (error) {
