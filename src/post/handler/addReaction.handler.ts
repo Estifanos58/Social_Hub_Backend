@@ -1,11 +1,14 @@
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { AddReactionCommand } from "../commands/addReaction.command";
 import { PrismaService } from "src/prisma.service";
+import { EventEmitter2 } from "@nestjs/event-emitter";
+import { PostReactionEvent } from "../event/postReaction.event";
 
 @CommandHandler(AddReactionCommand)
 export class AddReactionHandler implements ICommandHandler<AddReactionCommand> {
     constructor(
-        private readonly prismaService: PrismaService
+        private readonly prismaService: PrismaService,
+        private readonly eventEmitter: EventEmitter2,
     ){}
     async execute(command: AddReactionCommand): Promise<boolean> {
         const { userId, postId, ractionType } = command;
@@ -31,9 +34,13 @@ export class AddReactionHandler implements ICommandHandler<AddReactionCommand> {
                         type: ractionType
                     }
                 })
+                const post = await this.prismaService.post.findUnique({ where: { id: postId } });
+                if (post && post.createdById !== userId) {
+                    this.eventEmitter.emit('post.reacted', new PostReactionEvent(postId, userId, post.createdById, reaction.id, ractionType));
+                }
             } else {
                 // Create new reaction
-                await this.prismaService.reaction.create({
+                const created = await this.prismaService.reaction.create({
                     data: {
                         type: ractionType,
                         post: {
@@ -44,6 +51,10 @@ export class AddReactionHandler implements ICommandHandler<AddReactionCommand> {
                         }
                     }
                 })
+                const post = await this.prismaService.post.findUnique({ where: { id: postId } });
+                if (post && post.createdById !== userId) {
+                    this.eventEmitter.emit('post.reacted', new PostReactionEvent(postId, userId, post.createdById, created.id, ractionType));
+                }
             }
 
             return true;

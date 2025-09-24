@@ -28,6 +28,16 @@ enum ChatroomRole {
   MEMBER
 }
 
+// Notifications
+enum NotificationType {
+  LOGIN               // New login on the account
+  COMMENT_ON_POST     // Someone commented on user's post
+  REPLY_ON_COMMENT    // Someone replied to user's comment
+  REACTION_ON_POST    // Someone reacted to user's post
+  NEW_FOLLOWER        // Someone followed the user
+  POST_DELETED        // User deleted their post
+}
+
 // ============================================
 // User & Auth
 // ============================================
@@ -57,6 +67,10 @@ model User {
 
   followers    Follower[]      @relation("UserFollowers")
   following    Follower[]      @relation("UserFollowing")
+
+  // Notifications
+  notificationsReceived Notification[] @relation("UserNotificationsReceived")
+  notificationsActed    Notification[] @relation("UserNotificationsActed")
 
   @@index([email, firstname])
 }
@@ -118,6 +132,9 @@ model Post {
   comments    Comment[]    @relation("PostComments")
   reactions   Reaction[]   @relation("PostReactions")
 
+  // Notifications referencing this post
+  notifications Notification[]
+
   @@index([createdById, deletedAt])
 }
 
@@ -141,6 +158,9 @@ model Comment {
   parentId     String?
   parent       Comment?    @relation("ReplyComments", fields: [parentId], references: [id], onDelete: Cascade)
   replies      Comment[]   @relation("ReplyComments")
+
+  // Notifications referencing this comment
+  notifications Notification[]
 
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
@@ -166,6 +186,47 @@ model Reaction {
 
   @@unique([postId, createdById])      // one reaction per user per post
   @@index([postId, type, createdAt])              // quick counts by type
+
+  // Notifications referencing this reaction
+  notifications Notification[]
+}
+
+// ============================================
+// Notifications
+// ============================================
+model Notification {
+  id            String            @id @default(uuid())
+  type          NotificationType
+
+  // The user who receives this notification
+  recipientId   String
+  recipient     User              @relation("UserNotificationsReceived", fields: [recipientId], references: [id], onDelete: Cascade)
+
+  // Optional second user involved in the event (actor). For POST_DELETED, this may equal recipient or be null
+  actorId       String?
+  actor         User?             @relation("UserNotificationsActed", fields: [actorId], references: [id], onDelete: SetNull)
+
+  // Optional resource references for context
+  postId        String?
+  post          Post?             @relation(fields: [postId], references: [id], onDelete: SetNull)
+
+  commentId     String?
+  comment       Comment?          @relation(fields: [commentId], references: [id], onDelete: SetNull)
+
+  reactionId    String?
+  reaction      Reaction?         @relation(fields: [reactionId], references: [id], onDelete: SetNull)
+
+  // Extra flexible payload for UI (e.g., excerpt, preview)
+  metadata      Json?
+
+  isRead        Boolean           @default(false)
+  readAt        DateTime?
+  createdAt     DateTime          @default(now())
+
+  @@index([recipientId, isRead, createdAt])
+  @@index([actorId, createdAt])
+  @@index([postId])
+  @@index([commentId])
 }
 
 // ============================================

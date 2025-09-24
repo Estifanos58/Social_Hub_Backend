@@ -12,17 +12,22 @@ import {
   GetPostsHandler,
   RemoveReactionHandler,
 } from './handler';
+import { NotificationModule } from 'src/notification/notification.module';
+import { PostReactionEventHandler } from './event/postReaction.event.handler';
+import { PostDeletedEventHandler } from './event/postDeleted.event.handler';
 
 const CommandHandlers = [CreatePostHandler, DeletePostHandler, AddReactionHandler, RemoveReactionHandler];
 const QueryHandler = [GetPostsHandler, GetPostHandler];
 @Module({
-  imports: [CqrsModule, ConfigModule],
+  imports: [CqrsModule, ConfigModule, NotificationModule],
   providers: [
     PostResolver,
     JwtService,
     PrismaService,
     ...CommandHandlers,
     ...QueryHandler,
+    PostReactionEventHandler,
+    PostDeletedEventHandler,
   ],
 })
 export class PostModule {}

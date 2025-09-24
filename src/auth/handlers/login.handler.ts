@@ -6,6 +6,8 @@ import { HttpException, HttpStatus } from "@nestjs/common";
 import { issueToken } from "src/utils/issueToken";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { LoginEvent } from '../event/login.event';
 
 
 @CommandHandler(LoginCommand)
@@ -13,7 +15,8 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
     constructor(
         private readonly prismaService: PrismaService,
         private readonly jwtService: JwtService,
-        private readonly configService: ConfigService
+        private readonly configService: ConfigService,
+        private readonly eventEmitter: EventEmitter2,
     ){}
     async execute(command: LoginCommand) {
         const { email, password, res } = command;
@@ -33,6 +36,9 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
         if(!bcrypt.compareSync(password, user.credential!.passwordHash! )){
             throw new HttpException("Invalid credentials", HttpStatus.UNAUTHORIZED);
         }
-         return issueToken(user, this.jwtService, this.configService, res);
+        // Fire and forget login event (no await)
+        this.eventEmitter.emit('auth.login', new LoginEvent(user.id));
+
+        return issueToken(user, this.jwtService, this.configService, res);
     }
 }
