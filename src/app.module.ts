@@ -17,6 +17,7 @@ import { UserModule } from './user/user.module';
 import { PostModule } from './post/post.module';
 import { CommentModule } from './comment/comment.module';
 import { NotificationModule } from './notification/notification.module';
+import { MessageModule } from './message/message.module';
 
 const redisClient = new Redis(process.env.REDIS_URL!, {
   tls: {}
@@ -43,7 +44,8 @@ const pubSub = new RedisPubSub({
     UserModule,
     PostModule,
     CommentModule,
-  NotificationModule,
+    NotificationModule,
+    MessageModule,
     EventEmitterModule.forRoot(),
     GraphQLModule.forRootAsync({
       imports: [ConfigModule, AuthModule, TokenModule],

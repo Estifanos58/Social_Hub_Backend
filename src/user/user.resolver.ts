@@ -8,7 +8,7 @@ import { Request } from "express";
 import { UnFollowUserCommand } from "./commands/UnFollowUserCommand";
 import { GetUserQuery } from "./query/GetUser.query";
 import { UserProfileDto } from "./types/getUser.type";
-import { GetFollowersInput, GetUsersToFollow, UpdateUserDto } from "./dto";
+import { GetFollowersInput, GetUsersToFollow, SearchUsersInput, SearchUsersResultDto, UpdateUserDto } from "./dto";
 import { UpdateUserCommand } from "./commands/UpdateUserCommand";
 import { UserDto } from "src/types";
 import { GetUsersToFollowDto } from "./types/getUsersToFollow.type";
@@ -16,6 +16,7 @@ import { GetUsersToFollowQuery } from "./query/GetUsersToFollow.query";
 import { GetFollowersDto } from "./types/getFollow.type";
 import { GetFollowersQuery } from "./query/GetFollowers.query";
 import { GetFollowingQuery } from "./query/GetFollowing.query";
+import { SearchUsersQuery } from "./query/SearchUsers.query";
 
 @Resolver()
 export class UserResolver {
@@ -109,5 +110,17 @@ export class UserResolver {
     ): Promise<GetFollowersDto> {
         const userId = context.req.user?.sub!;
         return this.queryBus.execute(new GetFollowingQuery(userId, getFollowing.take, getFollowing.skip));
+    }
+
+
+    @UseGuards(GraphQLAuthGuard)
+    @Query(() => SearchUsersResultDto)
+    async SearchUsers(
+        @Args('searchUsersInput') searchUsersInput: SearchUsersInput,
+        @Context() context: { req: Request },
+    ): Promise<SearchUsersResultDto> {
+        const userId = context.req.user?.sub!;
+        const { searchTerm, limit, offset } = searchUsersInput;
+        return this.queryBus.execute(new SearchUsersQuery(userId, searchTerm, limit ?? 10, offset ?? 0));
     }
 }

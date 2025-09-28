@@ -149,7 +149,10 @@ type Mutation {
   UnfollowUser(followingId: String!): String!
   UpdateUser(updateUser: UpdateUserDto!): UserDto!
   addReaction(postId: String!, type: String!): Boolean!
+  addUserToChatroomMutation(chatroomId: String!, otherUserId: String!, userId: String!): ChatroomDto!
+  createChatroomMutation(chatroomName: String, isGroupChat: Boolean, otherUserId: String): String!
   createComment(createCommentInput: CreateCommentDto!): CommentDto!
+  createMessageMutation(chatroomId: String, content: String, imageUrl: String, otherUserId: String): MessageDto!
   createPost(createPost: CreatePostDto!): String!
   deletePost(postId: String!): String!
   followUser(followingId: String!): String!
@@ -159,6 +162,8 @@ type Mutation {
   register(registerInput: RegisterDto!): UserResponse!
   removeReaction(postId: String!): Boolean!
   resetPassword(newPassword: String!, token: String!): UserResponse!
+  userStartedTypingMutation(chatroomId: String!): UserDto!
+  userStoppedTypingMutation(chatroomId: String!): UserDto!
   verifyEmail(token: String!): UserResponse!
 }
 
@@ -249,6 +254,7 @@ type Query {
   GetFollowing(getFollowing: GetFollowersInput!): GetFollowersDto!
   GetUser(userId: String!): UserProfileDto!
   GetUsersToFollow(getUsersToFollow: GetUsersToFollow!): GetUsersToFollowDto!
+  SearchUsers(searchUsersInput: SearchUsersInput!): SearchUsersResultDto!
   commentReplies(after: String, commentId: String!, first: Int, includeChildren: Boolean, secondLevelLimit: Int): CommentRepliesConnectionDto!
   getPost(postId: String!): GetPostType!
   getPosts(cursor: String!, take: Float!): PaginatedPostsDto!
@@ -283,6 +289,24 @@ input RegisterDto {
   firstname: String!
   lastname: String!
   password: String!
+}
+
+input SearchUsersInput {
+  limit: Int
+  offset: Int
+  searchTerm: String!
+}
+
+type SearchUsersResultDto {
+  hasMore: Boolean!
+  users: [UserDto!]!
+}
+
+type Subscription {
+  newMessage(chatroomId: String!, otherUserId: String!, userId: String!): MessageDto
+  userAddedToChatroom(chatroomId: String!, otherUserId: String!, userId: String!): ChatroomDto
+  userStatedTyping(chatroomId: String!, userId: String!): UserDto
+  userStoppedTyping(chatroomId: String!, userId: String!): UserDto
 }
 
 input UpdateUserDto {

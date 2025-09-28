@@ -1,5 +1,6 @@
-import { Field, InputType, Int } from "@nestjs/graphql";
+import { Field, InputType, Int, ObjectType } from "@nestjs/graphql";
 import { IsBoolean, IsOptional, IsString } from "class-validator";
+import { UserDto } from "src/types";
 
 @InputType()
 export class UpdateUserDto {
@@ -55,4 +56,29 @@ export class GetFollowersInput {
   @Field(()=> Int, { nullable: true })
   @IsOptional()
   skip?: number;
+}
+
+@InputType()
+export class SearchUsersInput {
+  @Field()
+  @IsString({ message: 'searchTerm must be a string' })
+  searchTerm: string;
+
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  limit?: number;
+
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  offset?: number;
+}
+
+
+@ObjectType()
+export class SearchUsersResultDto {
+    @Field(() => [UserDto])
+    users: UserDto[];
+
+    @Field()
+    hasMore: boolean;
 }
