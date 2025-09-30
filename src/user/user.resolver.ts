@@ -17,6 +17,8 @@ import { GetFollowersDto } from "./types/getFollow.type";
 import { GetFollowersQuery } from "./query/GetFollowers.query";
 import { GetFollowingQuery } from "./query/GetFollowing.query";
 import { SearchUsersQuery } from "./query/SearchUsers.query";
+import { GetChatUsersResponse } from "./types/getChatUsers.type";
+import { GetChatUsersQuery } from "./query/GetChatUsers.query";
 
 @Resolver()
 export class UserResolver {
@@ -122,5 +124,14 @@ export class UserResolver {
         const userId = context.req.user?.sub!;
         const { searchTerm, limit, offset } = searchUsersInput;
         return this.queryBus.execute(new SearchUsersQuery(userId, searchTerm, limit ?? 10, offset ?? 0));
+    }
+
+    @UseGuards(GraphQLAuthGuard)
+    @Query(() => GetChatUsersResponse)
+    async GetChatUsers(
+        @Context() context: { req: Request }
+    ): Promise<GetChatUsersResponse> {
+        const userId = context.req.user?.sub!;
+        return this.queryBus.execute(new GetChatUsersQuery(userId));
     }
 }

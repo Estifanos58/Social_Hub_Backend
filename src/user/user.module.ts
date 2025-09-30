@@ -3,7 +3,7 @@ import { ConfigModule } from "@nestjs/config"
 import { CqrsModule } from "@nestjs/cqrs"
 import { PrismaService } from "src/prisma.service"
 import { UserResolver } from "./user.resolver"
-import { FollowUserHandler, GetFollowersHandler, GetFollowingHandler, GetUserHandler, GetUsersToFollowHandler, SearchUsersHandler, UnFollowUserHandler, UpdateUserHandler } from "./handlers"
+import { FollowUserHandler, GetChatUsersHandler, GetFollowersHandler, GetFollowingHandler, GetUserHandler, GetUsersToFollowHandler, SearchUsersHandler, UnFollowUserHandler, UpdateUserHandler } from "./handlers"
 import { JwtService } from "@nestjs/jwt"
 import { NotificationModule } from "src/notification/notification.module"
 import { NewFollowerEventHandler } from "./event"
@@ -11,7 +11,7 @@ import { NewFollowerEventHandler } from "./event"
 
 const CommandHandlers = [FollowUserHandler, UnFollowUserHandler, UpdateUserHandler]
 const EventHandlers = [NewFollowerEventHandler]
-const QueryHandlers = [GetUserHandler, GetUsersToFollowHandler, GetFollowersHandler, GetFollowingHandler, SearchUsersHandler]
+const QueryHandlers = [GetUserHandler, GetUsersToFollowHandler, GetFollowersHandler, GetFollowingHandler, SearchUsersHandler, GetChatUsersHandler]
 
 @Module({
     imports: [CqrsModule, ConfigModule, NotificationModule],

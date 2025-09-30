@@ -89,6 +89,18 @@ type FollowerDto {
   id: String!
 }
 
+type GetChatUsersDto {
+  chatroomId: String!
+  groupName: String
+  isGroup: Boolean!
+  latestMessage: MessageDto!
+  otherUser: UserDto
+}
+
+type GetChatUsersResponse {
+  chatrooms: [GetChatUsersDto!]!
+}
+
 type GetFollowersDto {
   hasMore: Boolean
   totalFollowers: Float
@@ -250,6 +262,7 @@ type PostImageDto {
 }
 
 type Query {
+  GetChatUsers: GetChatUsersResponse!
   GetFollowers(getFollowers: GetFollowersInput!): GetFollowersDto!
   GetFollowing(getFollowing: GetFollowersInput!): GetFollowersDto!
   GetUser(userId: String!): UserProfileDto!
