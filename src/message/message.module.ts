@@ -8,6 +8,7 @@ import {
 	AddUserToChatroomHandler,
 	CreateChatroomHandler,
 	CreateMessageHandler,
+	GetMessagesHandler,
 } from './handlers';
 
 const CommandHandlers = [
@@ -16,8 +17,12 @@ const CommandHandlers = [
 	CreateMessageHandler,
 ];
 
+const QueryHandlers = [
+	GetMessagesHandler
+]  
+
 @Module({
 	imports: [CqrsModule, ConfigModule],
-	providers: [MessageResolver, PrismaService, JwtService, ...CommandHandlers],
+	providers: [MessageResolver, PrismaService, JwtService, ...CommandHandlers, ...QueryHandlers],
 })
 export class MessageModule {}

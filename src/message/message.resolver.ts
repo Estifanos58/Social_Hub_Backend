@@ -4,13 +4,15 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
   Args,
   Context,
   Mutation,
+  Query,
   Resolver,
   Subscription,
+  Int,
 } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { Request } from 'express';
@@ -20,6 +22,7 @@ import { ChatroomDto, MessageDto, UserDto } from 'src/types';
 import { CreateChatroomCommand } from './commands/CreateChatroom.command';
 import { AddUserToChatroomCommand } from './commands/AddUserToChatroom.command';
 import { CreateMessageCommand } from './commands/CreateMessage.command';
+import { GetMessagesQuery } from './query/GetMessages.query';
 
 @Resolver()
 export class MessageResolver {
@@ -27,10 +30,36 @@ export class MessageResolver {
 
   constructor(
     private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
     private readonly prismaService: PrismaService,
   ) {
     this.pubSub = new PubSub();
   }
+  @UseGuards(GraphQLAuthGuard)
+  @Query(() => [MessageDto])
+  async messagesBetweenUsers(
+    @Args('otherUserId', { nullable: true }) otherUserId: string,
+    @Args('limit', { type: () => Int, nullable: true }) limit: number,
+    @Args('offset', { type: () => Int, nullable: true }) offset: number,
+    @Context() context: { req: Request },
+  ) {
+    const userId = context.req.user?.sub;
+
+    if (!userId) {
+      throw new UnauthorizedException('Unauthorized');
+    }
+
+    if (!otherUserId) {
+      throw new BadRequestException(
+        'Provide the other user id for direct chats or the group chatroom id',
+      );
+    }
+
+    return this.queryBus.execute(
+      new GetMessagesQuery(userId, otherUserId, limit, offset),
+    );
+  }
+
 
   private getPubSub(context?: { pubSub?: PubSub }) {
     return context?.pubSub ?? this.pubSub;

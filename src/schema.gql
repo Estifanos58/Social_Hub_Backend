@@ -272,6 +272,7 @@ type Query {
   getPost(postId: String!): GetPostType!
   getPosts(cursor: String!, take: Float!): PaginatedPostsDto!
   getme: UserDto!
+  messagesBetweenUsers(limit: Int, offset: Int, otherUserId: String): [MessageDto!]!
   notifications(cursor: String, take: Int): [NotificationDto!]!
   postComments(after: String, directRepliesLimit: Int, first: Int, postId: String!, secondLevelLimit: Int): PostCommentsConnectionDto!
   unreadNotificationsCount: Int!
