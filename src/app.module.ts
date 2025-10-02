@@ -70,31 +70,35 @@ const pubSub = new RedisPubSub({
                 if (!rawCookies) throw new Error('No cookies found');
 
                 const parsedCookies = cookie.parse(rawCookies);
-                const refreshToken = parsedCookies['refresh_token'];
-                if (!refreshToken) throw new Error('No access token found');
+                const refreshToken =
+                  parsedCookies['refreshToken'] ?? parsedCookies['refresh_token'];
+                if (!refreshToken) throw new Error('No refresh token found');
 
                 const user = await tokenService.validateToken(refreshToken);
+                // console.log('USER FROM GRAPHQL-WS :', user)
                 if (!user) throw new Error('Invalid token');
 
                 return { user };
               },
             },
             // For Legacy Support
-            'subscriptions-transport-ws': {
-              onConnect: async (connectionParams, webSocket, context) => {
-                const rawCookies = context?.request?.headers?.cookie;
-                if (!rawCookies) throw new Error('No cookies found');
+            // 'subscriptions-transport-ws': {
+            //   onConnect: async (connectionParams, webSocket, context) => {
+            //     const rawCookies = context?.request?.headers?.cookie;
+            //     if (!rawCookies) throw new Error('No cookies found');
 
-                const parsedCookies = cookie.parse(rawCookies);
-                const refreshToken = parsedCookies['refresh_token'];
-                if (!refreshToken) throw new Error('No access token found');
+            //     const parsedCookies = cookie.parse(rawCookies);
+            //     const refreshToken =
+            //       parsedCookies['refreshToken'] ?? parsedCookies['refresh_token'];
+            //     if (!refreshToken) throw new Error('No refresh token found');
 
-                const user = await tokenService.validateToken(refreshToken);
-                if (!user) throw new Error('Invalid token');
+            //     const user = await tokenService.validateToken(refreshToken);
+            //     console.log('USER FROM SUBSCRIPTION :', user)
+            //     if (!user) throw new Error('Invalid token');
 
-                return { user };
-              },
-            },
+            //     return { user };
+            //   },
+            // },
           },
 
           context: ({ req, res, connection }) => {

@@ -33,6 +33,9 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
         }
 
 
+        if(!user.credential?.passwordHash) {
+            throw new HttpException("Invalid credentials", HttpStatus.UNAUTHORIZED);
+        }
         if(!bcrypt.compareSync(password, user.credential!.passwordHash! )){
             throw new HttpException("Invalid credentials", HttpStatus.UNAUTHORIZED);
         }

@@ -18,14 +18,15 @@ export class GraphQLAuthGuard implements CanActivate {
     const gqlCtx = context.getArgByIndex(2);
     const request: Request = gqlCtx.req;
     const response: Response = gqlCtx.res;
-    const token = request.cookies?.access_token;
+  const token = request.cookies?.accessToken ?? request.cookies?.access_token;
 
     // console.log("Token:", token);
     // console.log('Request Cookies:', request.cookies);
 
     
     if (!token) {
-      const refreshToken = request.cookies?.refreshToken;
+      const refreshToken =
+        request.cookies?.refreshToken ?? request.cookies?.refresh_token;
 
       if(!refreshToken){
         throw new UnauthorizedException();

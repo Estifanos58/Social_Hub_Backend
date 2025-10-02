@@ -93,8 +93,11 @@ export class AuthResolver {
     async logout(
         @Context() context: { res: Response}
     ){
-        context.res.clearCookie('accessToken', { httpOnly: true, sameSite: 'none', secure: true });
-        context.res.clearCookie('refreshToken', { httpOnly: true, sameSite: 'none', secure: true });
+    const cookieOptions = { httpOnly: true, sameSite: 'none', secure: true };
+    context.res.clearCookie('accessToken', { httpOnly: true, sameSite: 'none', secure: true });
+    context.res.clearCookie('refreshToken', { httpOnly: true, sameSite: 'none', secure: true });
+    context.res.clearCookie('access_token', { httpOnly: true, sameSite: 'none', secure: true });
+    context.res.clearCookie('refresh_token', { httpOnly: true, sameSite: 'none', secure: true });
         return 'Successfully logged out';
     }
     
