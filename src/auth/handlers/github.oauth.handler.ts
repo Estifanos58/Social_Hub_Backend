@@ -80,7 +80,7 @@ export class GithubOAuthHandler implements ICommandHandler<GithubOAuthCommand> {
           Accept: 'application/json',
         },
       });
-      console.log("GitHub OAuth token response:", response.data);
+      // console.log("GitHub OAuth token response:", response.data);
       return response.data;
     } catch (error) {
       console.log("Error: ",error)
@@ -98,7 +98,7 @@ export class GithubOAuthHandler implements ICommandHandler<GithubOAuthCommand> {
       },
     });
 
-    console.log("GitHub user profile response:", userRes.data);
+    // console.log("GitHub user profile response:", userRes.data);
 
     // 2. Get the user's emails (this returns an array of objects)
     const emailUrl = 'https://api.github.com/user/emails';
@@ -108,7 +108,7 @@ export class GithubOAuthHandler implements ICommandHandler<GithubOAuthCommand> {
       },
     });
 
-    console.log("GitHub user emails response:", emailRes.data);
+    // console.log("GitHub user emails response:", emailRes.data);
 
     if (!Array.isArray(emailRes.data) || emailRes.data.length === 0) {
       throw new Error('No emails associated with this GitHub account');

@@ -77,11 +77,11 @@ export class GoogleOAuthHandler implements ICommandHandler<GoogleOAuthCommand> {
     try {
 
 
-      console.log("Token exchange request:", {
-  code,
-  client_id: this.configService.get('GOOGLE_CLIENT_ID'),
-  redirect_uri: this.configService.get('GOOGLE_REDIRECT_URL'),
-});
+//       console.log("Token exchange request:", {
+//   code,
+//   client_id: this.configService.get('GOOGLE_CLIENT_ID'),
+//   redirect_uri: this.configService.get('GOOGLE_REDIRECT_URL'),
+// });
 
 
       const url = 'https://oauth2.googleapis.com/token';

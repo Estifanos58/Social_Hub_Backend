@@ -6,11 +6,9 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ApolloDriver } from '@nestjs/apollo';
 import { join } from 'path';
-import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { TokenService } from './token/token.service';
 import * as cookie from 'cookie';
 import { TokenModule } from './token/token.module';
-import Redis from 'ioredis';
 import { MailModule } from './mail/mail.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { UserModule } from './user/user.module';
@@ -18,20 +16,7 @@ import { PostModule } from './post/post.module';
 import { CommentModule } from './comment/comment.module';
 import { NotificationModule } from './notification/notification.module';
 import { MessageModule } from './message/message.module';
-
-const redisClient = new Redis(process.env.REDIS_URL!, {
-  tls: {}
-});
-const pubSub = new RedisPubSub({
-  publisher: redisClient,
-  subscriber: redisClient,
-  connection: {
-    retryStrategy: (times) => {
-      // retry strategy
-      return Math.min(times * 50, 2000);
-    },
-  },
-});
+import { redisPubSub } from './pubsub';
 
 @Module({
   imports: [
@@ -107,10 +92,10 @@ const pubSub = new RedisPubSub({
                 req,
                 res,
                 user: connection.context.user,
-                pubSub,
+                pubSub: redisPubSub,
               };
             }
-            return { req, res, pubSub };
+            return { req, res, pubSub: redisPubSub };
           },
         };
       },

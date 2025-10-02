@@ -11,7 +11,7 @@ export class GetCurrentUserHandler implements IQueryHandler<GetCurrentUserQuery>
     async execute(query: GetCurrentUserQuery){
         const { userId } = query
 
-        console.log('UserID: ', userId)
+        // console.log('UserID: ', userId)
 
         try {
             const user = await this.prismaService.user.findUnique({

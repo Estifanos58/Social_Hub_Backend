@@ -10,7 +10,7 @@ export class GetPostsHandler implements IQueryHandler<GetPostsQuery> {
 
   async execute(query: GetPostsQuery): Promise<PaginatedPostsDto> {
     const { cursor, take, userId } = query;
-    console.log(`Executing GetPostsHandler with userId: ${userId}`);
+    // console.log(`Executing GetPostsHandler with userId: ${userId}`);
 
     try {
       const posts = await this.prisma.post.findMany({
@@ -33,7 +33,7 @@ export class GetPostsHandler implements IQueryHandler<GetPostsQuery> {
 
       const hasMore = posts.length > take;
 
-      console.log(`Fetched POSTS ${posts}`);
+      // console.log(`Fetched POSTS ${posts}`);
 
       const mappedPosts = (hasMore ? posts.slice(0, -1) : posts).map(
         (post) => ({
@@ -50,7 +50,7 @@ export class GetPostsHandler implements IQueryHandler<GetPostsQuery> {
         })
       );
 
-      console.log(`Fetched MAPPEDPOSTS ${mappedPosts}`);
+      // console.log(`Fetched MAPPEDPOSTS ${mappedPosts}`);
 
       return {
         posts: mappedPosts,
