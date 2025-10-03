@@ -19,6 +19,8 @@ import { GetFollowingQuery } from "./query/GetFollowing.query";
 import { SearchUsersQuery } from "./query/SearchUsers.query";
 import { GetChatUsersResponse } from "./types/getChatUsers.type";
 import { GetChatUsersQuery } from "./query/GetChatUsers.query";
+import { GetUserChatroomsResponse } from "./types/getUserChatrooms.type";
+import { GetUserChatroomsQuery } from "./query/GetUserChatrooms.query";
 
 @Resolver()
 export class UserResolver {
@@ -133,5 +135,15 @@ export class UserResolver {
     ): Promise<GetChatUsersResponse> {
         const userId = context.req.user?.sub!;
         return this.queryBus.execute(new GetChatUsersQuery(userId));
+    }
+
+
+    @UseGuards(GraphQLAuthGuard)
+    @Query(()=> GetUserChatroomsResponse)
+    async GetUserChatrooms(
+        @Context() context: { req: Request }
+    ): Promise<GetUserChatroomsResponse> {
+        const userId = context.req.user?.sub!;
+        return this.queryBus.execute(new GetUserChatroomsQuery(userId));
     }
 }

@@ -128,6 +128,10 @@ type GetPostType {
   userReaction: String
 }
 
+type GetUserChatroomsResponse {
+  chatrooms: [ChatroomDto!]!
+}
+
 input GetUsersToFollow {
   limit: Int
   offset: Int
@@ -266,6 +270,7 @@ type Query {
   GetFollowers(getFollowers: GetFollowersInput!): GetFollowersDto!
   GetFollowing(getFollowing: GetFollowersInput!): GetFollowersDto!
   GetUser(userId: String!): UserProfileDto!
+  GetUserChatrooms: GetUserChatroomsResponse!
   GetUsersToFollow(getUsersToFollow: GetUsersToFollow!): GetUsersToFollowDto!
   SearchUsers(searchUsersInput: SearchUsersInput!): SearchUsersResultDto!
   commentReplies(after: String, commentId: String!, first: Int, includeChildren: Boolean, secondLevelLimit: Int): CommentRepliesConnectionDto!

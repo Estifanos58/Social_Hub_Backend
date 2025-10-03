@@ -106,11 +106,11 @@ export class MessageResolver {
     return pubSub.asyncIterableIterator(`createChatroom.${otherUserId}`);
   }
 
-    @UseGuards(GraphQLAuthGuard)
+  @UseGuards(GraphQLAuthGuard)
   @Mutation(() => MessageDto)
   async createMessageMutation(
-    @Args('chatroomId', { nullable: true }) chatroomId: string,
-    @Args('otherUserId', { nullable: true }) otherUserId: string,
+  @Args('chatroomId', { nullable: true }) chatroomId: string,
+  @Args('otherUserId', { nullable: true }) otherUserId: string,
   @Args('content', { nullable: true }) content: string,
   @Args('imageUrl', { nullable: true }) imageUrl: string,
   @Context() context: RequestContext,
