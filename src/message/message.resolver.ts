@@ -98,7 +98,6 @@ export class MessageResolver {
     resolve: (value) => value.newMessage
   })
   chatroomCreated(
-  @Args('userId') userId?: string,
   @Args('otherUserId') otherUserId?: string,
   @Context() context?: SubscriptionContext,
   ){
