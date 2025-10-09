@@ -349,6 +349,7 @@ type UserDto {
   followers: [FollowerDto!]
   following: [FollowerDto!]
   id: String!
+  isFollowing: Boolean
   isPrivate: Boolean!
   lastSeenAt: DateTime
   lastname: String

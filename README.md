@@ -1,98 +1,142 @@
+
+# SocialHub Backend
+
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <img src="https://nestjs.com/img/logo-small.svg" width="100" alt="NestJS Logo" />
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Overview
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+**SocialHub Backend** is a robust, scalable, and feature-rich GraphQL API server for a modern social networking platform. Built with [NestJS](https://nestjs.com/) and [Prisma ORM](https://www.prisma.io/), it powers real-time social interactions, messaging, notifications, and user management with a modular, event-driven architecture.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Features
 
-## Project setup
+- **Authentication & Authorization**: JWT-based authentication, refresh tokens, OAuth (Google, GitHub), email verification, password reset, and account privacy controls.
+- **User Profiles & Social Graph**: Rich user profiles, follow/unfollow, followers/following lists, user search, and suggestions.
+- **Posts & Reactions**: Create, delete, and fetch posts with image support, paginated feeds, and multiple reaction types (like, love, haha, etc.).
+- **Comments & Replies**: Nested comments, replies, and efficient pagination for large threads.
+- **Notifications**: Real-time and persistent notifications for comments, reactions, follows, and more, with unread counts and read tracking.
+- **Messaging & Chatrooms**: Direct and group chatrooms, real-time messaging (subscriptions), unread counts, and read receipts.
+- **GraphQL API**: Strongly-typed schema, modular resolvers, CQRS pattern, and GraphQL subscriptions for real-time updates.
+- **Event-Driven**: Uses NestJS CQRS and event emitter for decoupled business logic and side effects (e.g., notifications on new followers).
+- **Prisma ORM**: Type-safe, performant database access with PostgreSQL, migrations, and advanced relations.
+- **Redis PubSub**: Real-time GraphQL subscriptions and scalable event delivery.
+- **Testing**: Unit and e2e tests with Jest.
+
+---
+
+## Architecture
+
+- **NestJS**: Modular, dependency-injected, and testable application structure.
+- **CQRS**: Command and Query Responsibility Segregation for scalable, maintainable business logic.
+- **Prisma**: Modern ORM for PostgreSQL, with a rich schema for users, posts, comments, reactions, notifications, chatrooms, and more.
+- **GraphQL**: Apollo Server with code-first schema, subscriptions, and context-aware resolvers.
+- **Redis**: For pub/sub and scalable real-time features.
+
+---
+
+## Tech Stack
+
+- **Node.js** (NestJS, TypeScript)
+- **GraphQL** (Apollo, graphql-ws)
+- **Prisma ORM** (PostgreSQL)
+- **Redis** (PubSub, caching)
+- **Jest** (Testing)
+- **Docker** (Recommended for deployment)
+
+---
+
+## Getting Started
+
+### Prerequisites
+- Node.js v18+
+- PostgreSQL database
+- Redis server
+
+### Installation
 
 ```bash
-$ npm install
+git clone <repo-url>
+cd social-hub_backend
+npm install
 ```
 
-## Compile and run the project
+### Environment Setup
+
+Copy `.env.example` to `.env` and configure your database, Redis, and JWT secrets:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+cp .env.example .env
+# Edit .env with your credentials
 ```
 
-## Run tests
+### Database Migration
 
 ```bash
-# unit tests
-$ npm run test
+npx prisma migrate deploy
+# or for development
+npx prisma migrate dev
+```
 
+### Running the Server
+
+```bash
+# Development
+npm run start:dev
+
+# Production
+npm run build
+npm run start:prod
+```
+
+### Testing
+
+```bash
+# Unit tests
+npm run test
 # e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run test:e2e
+# Coverage
+npm run test:cov
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## API Reference
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+- **GraphQL Playground**: Available at `/graphql` in development mode.
+- **Authentication**: JWT via HTTP-only cookies, OAuth, and email flows.
+- **Subscriptions**: Real-time updates for messaging, notifications, and more.
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+---
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## Folder Structure
 
-## Resources
+- `src/` - Main source code
+  - `auth/` - Authentication, guards, and resolvers
+  - `user/` - User profile, follow, search, and CQRS handlers
+  - `post/` - Posts, reactions, and related events
+  - `comment/` - Comments, replies, and pagination
+  - `notification/` - Notification logic and queries
+  - `message/` - Chatrooms, messages, and subscriptions
+  - `mail/` - Email sending and templates
+  - `prisma.service.ts` - Prisma integration
+  - `pubsub.ts` - Redis PubSub setup
+  - `types/` - GraphQL and DTO types
+  - `utils/` - Utility functions
+- `prisma/` - Prisma schema and migrations
+- `test/` - Test suites
 
-Check out a few resources that may come in handy when working with NestJS:
+---
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Contributing
 
-## Support
+Contributions are welcome! Please open issues and submit pull requests for new features, bug fixes, or improvements.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+---
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the MIT License.

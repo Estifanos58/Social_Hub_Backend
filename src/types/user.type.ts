@@ -30,6 +30,9 @@ export class UserDto {
   @Field()
   isPrivate: boolean;
 
+  @Field(() => Boolean, { nullable: true })
+  isFollowing?: boolean;
+
   @Field(() => GraphQLISODateTime)
   createdAt: Date;
 

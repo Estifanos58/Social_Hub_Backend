@@ -20,7 +20,7 @@ export class GetUsersToFollowHandler implements IQueryHandler<GetUsersToFollowQu
                     id: { not: userId },
                     followers: {
                         none: {
-                            followingId: userId
+                            followerId: userId
                         }
                     }
                 },
@@ -28,6 +28,28 @@ export class GetUsersToFollowHandler implements IQueryHandler<GetUsersToFollowQu
                 skip: offset,
                 orderBy: {
                     createdAt: "desc"
+                },
+                select: {
+                    id: true,
+                    firstname: true,
+                    lastname: true,
+                    bio: true,
+                    avatarUrl: true,
+                    email: true,
+                    lastSeenAt: true,
+                    verified: true,
+                    isPrivate: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    following: {
+                        where: {
+                            followingId: userId
+                        },
+                        select: {
+                            id: true
+                        },
+                        take: 1
+                    }
                 }
             });
 
@@ -40,8 +62,13 @@ export class GetUsersToFollowHandler implements IQueryHandler<GetUsersToFollowQu
 
             const hasMore = users.length > limit;
 
+            const sanitizedUsers = (hasMore ? users.slice(0, limit) : users).map(({ following, ...user }) => ({
+                ...user,
+                isFollowing: Array.isArray(following) && following.length > 0
+            }));
+
             return {
-                users: hasMore ? users.slice(0, limit) : users,
+                users: sanitizedUsers,
                 hasMore
             };
 
@@ -52,3 +79,21 @@ export class GetUsersToFollowHandler implements IQueryHandler<GetUsersToFollowQu
         }
     }
 }
+
+/*
+
+{
+    users: [
+        {
+            id: 1,
+            firsname,
+            lastname,
+            avatarUrl,
+            email,
+            isFollowing: boolean(wether the user follows the current user or not),
+        }
+    ],
+    hasMore: boolean
+}
+
+*/
