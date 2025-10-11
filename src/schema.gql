@@ -197,7 +197,7 @@ type Mutation {
   UnfollowUser(followingId: String!): String!
   UpdateUser(updateUser: UpdateUserDto!): UserDto!
   addReaction(postId: String!, type: String!): Boolean!
-  addUserToChatroomMutation(chatroomId: String!, otherUserId: String!, userId: String!): ChatroomDto!
+  addUserToChatroomMutation(chatroomId: String!, otherUserIds: [String!]!, userId: String!): [String!]!
   createChatroomMutation(avatarUrl: String, chatroomName: String, isGroupChat: Boolean, otherUserId: String): String!
   createComment(createCommentInput: CreateCommentDto!): CommentDto!
   createMessageMutation(chatroomId: String, content: String, imageUrl: String, otherUserId: String): MessageDto!

@@ -5,26 +5,21 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma.service';
 import { MessageResolver } from './message.resolver';
 import {
-	AddUserToChatroomHandler,
-	CreateChatroomHandler,
 	CreateMessageHandler,
 	GetMessagesHandler,
-  GetChatroomDetailHandler,
 } from './handlers';
+import { ChatroomModule } from 'src/chatroom/chatroom.module';
 
 const CommandHandlers = [
-	CreateChatroomHandler,
-	AddUserToChatroomHandler,
 	CreateMessageHandler,
 ];
 
 const QueryHandlers = [
 	GetMessagesHandler,
-	GetChatroomDetailHandler,
 ]  
 
 @Module({
-	imports: [CqrsModule, ConfigModule],
+	imports: [CqrsModule, ConfigModule, ChatroomModule],
 	providers: [MessageResolver, PrismaService, JwtService, ...CommandHandlers, ...QueryHandlers],
 })
 export class MessageModule {}

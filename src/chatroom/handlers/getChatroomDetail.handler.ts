@@ -1,8 +1,8 @@
 import { BadRequestException, HttpException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { PrismaService } from 'src/prisma.service';
-import { GetChatroomDetailQuery } from '../query/GetChatroomDetail.query';
 import { ChatroomDetailDto, ChatroomMemberDetailDto, ChatroomDirectUserDto } from 'src/types';
+import { GetChatroomDetailQuery } from '../query/GetChatroomDetail.query';
 
 @QueryHandler(GetChatroomDetailQuery)
 export class GetChatroomDetailHandler implements IQueryHandler<GetChatroomDetailQuery> {

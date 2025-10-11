@@ -17,6 +17,7 @@ import { CommentModule } from './comment/comment.module';
 import { NotificationModule } from './notification/notification.module';
 import { MessageModule } from './message/message.module';
 import { redisPubSub } from './pubsub';
+import { ChatroomModule } from './chatroom/chatroom.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { redisPubSub } from './pubsub';
     CommentModule,
     NotificationModule,
     MessageModule,
+    ChatroomModule,
     EventEmitterModule.forRoot(),
     GraphQLModule.forRootAsync({
       imports: [ConfigModule, AuthModule, TokenModule],
@@ -66,24 +68,6 @@ import { redisPubSub } from './pubsub';
                 return { user };
               },
             },
-            // For Legacy Support
-            // 'subscriptions-transport-ws': {
-            //   onConnect: async (connectionParams, webSocket, context) => {
-            //     const rawCookies = context?.request?.headers?.cookie;
-            //     if (!rawCookies) throw new Error('No cookies found');
-
-            //     const parsedCookies = cookie.parse(rawCookies);
-            //     const refreshToken =
-            //       parsedCookies['refreshToken'] ?? parsedCookies['refresh_token'];
-            //     if (!refreshToken) throw new Error('No refresh token found');
-
-            //     const user = await tokenService.validateToken(refreshToken);
-            //     console.log('USER FROM SUBSCRIPTION :', user)
-            //     if (!user) throw new Error('Invalid token');
-
-            //     return { user };
-            //   },
-            // },
           },
 
           context: ({ req, res, connection }) => {
