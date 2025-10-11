@@ -4,5 +4,6 @@ export class CreateChatroomCommand {
     public readonly otherUserId?: string,
     public readonly isGroupChat?: boolean,
     public readonly chatroomName?: string,
+    public readonly avatarUrl?: string,
   ) {}
 }

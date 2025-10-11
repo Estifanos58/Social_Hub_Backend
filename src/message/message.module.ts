@@ -9,6 +9,7 @@ import {
 	CreateChatroomHandler,
 	CreateMessageHandler,
 	GetMessagesHandler,
+  GetChatroomDetailHandler,
 } from './handlers';
 
 const CommandHandlers = [
@@ -18,7 +19,8 @@ const CommandHandlers = [
 ];
 
 const QueryHandlers = [
-	GetMessagesHandler
+	GetMessagesHandler,
+	GetChatroomDetailHandler,
 ]  
 
 @Module({

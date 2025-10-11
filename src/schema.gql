@@ -10,6 +10,29 @@ enum ChatRoomRole {
   OWNER
 }
 
+type ChatroomDetailDto {
+  avatarUrl: String
+  directUser: ChatroomDirectUserDto
+  id: String!
+  isGroup: Boolean!
+  members: [ChatroomMemberDetailDto!]
+  name: String
+  totalMembers: Int
+  totalMessages: Int!
+  totalPhotos: Int!
+}
+
+type ChatroomDirectUserDto {
+  avatarUrl: String
+  bio: String
+  email: String!
+  firstname: String
+  id: String!
+  lastname: String
+  totalFollowers: Int!
+  totalFollowing: Int!
+}
+
 type ChatroomDto {
   avatarUrl: String
   createdAt: DateTime!
@@ -22,6 +45,15 @@ type ChatroomDto {
   messages: [MessageDto!]
   name: String
   updatedAt: DateTime!
+}
+
+type ChatroomMemberDetailDto {
+  avatarUrl: String
+  firstname: String
+  id: String!
+  isOwner: Boolean!
+  lastname: String
+  userId: String!
 }
 
 type ChatroomUserDto {
@@ -166,7 +198,7 @@ type Mutation {
   UpdateUser(updateUser: UpdateUserDto!): UserDto!
   addReaction(postId: String!, type: String!): Boolean!
   addUserToChatroomMutation(chatroomId: String!, otherUserId: String!, userId: String!): ChatroomDto!
-  createChatroomMutation(chatroomName: String, isGroupChat: Boolean, otherUserId: String): String!
+  createChatroomMutation(avatarUrl: String, chatroomName: String, isGroupChat: Boolean, otherUserId: String): String!
   createComment(createCommentInput: CreateCommentDto!): CommentDto!
   createMessageMutation(chatroomId: String, content: String, imageUrl: String, otherUserId: String): MessageDto!
   createPost(createPost: CreatePostDto!): String!
@@ -273,6 +305,7 @@ type Query {
   GetUserChatrooms: GetUserChatroomsResponse!
   GetUsersToFollow(getUsersToFollow: GetUsersToFollow!): GetUsersToFollowDto!
   SearchUsers(searchUsersInput: SearchUsersInput!): SearchUsersResultDto!
+  chatroomDetail(chatroomId: String!): ChatroomDetailDto!
   commentReplies(after: String, commentId: String!, first: Int, includeChildren: Boolean, secondLevelLimit: Int): CommentRepliesConnectionDto!
   getPost(postId: String!): GetPostType!
   getPosts(cursor: String!, take: Float!): PaginatedPostsDto!

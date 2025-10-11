@@ -18,11 +18,12 @@ import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { Request } from 'express';
 import { GraphQLAuthGuard } from 'src/auth/graphql-auth.guard';
 import { PrismaService } from 'src/prisma.service';
-import { ChatroomDto, MessageDto, UserDto } from 'src/types';
+import { ChatroomDetailDto, ChatroomDto, MessageDto, UserDto } from 'src/types';
 import { CreateChatroomCommand } from './commands/CreateChatroom.command';
 import { AddUserToChatroomCommand } from './commands/AddUserToChatroom.command';
 import { CreateMessageCommand } from './commands/CreateMessage.command';
 import { GetMessagesQuery } from './query/GetMessages.query';
+import { GetChatroomDetailQuery } from './query/GetChatroomDetail.query';
 import { redisPubSub } from 'src/pubsub';
 
 
@@ -59,6 +60,27 @@ export class MessageResolver {
 
     return this.queryBus.execute(
       new GetMessagesQuery(userId, otherUserId, limit, offset),
+    );
+  }
+
+  @UseGuards(GraphQLAuthGuard)
+  @Query(() => ChatroomDetailDto)
+  async chatroomDetail(
+    @Args('chatroomId') chatroomId: string,
+    @Context() context: { req: Request },
+  ) {
+    const userId = context.req.user?.sub;
+
+    if (!userId) {
+      throw new UnauthorizedException('Unauthorized');
+    }
+
+    if (!chatroomId) {
+      throw new BadRequestException('chatroomId is required');
+    }
+
+    return this.queryBus.execute(
+      new GetChatroomDetailQuery(chatroomId, userId),
     );
   }
 
@@ -135,7 +157,7 @@ export class MessageResolver {
       }
 
       const createdChatroom = await this.commandBus.execute(
-        new CreateChatroomCommand(userId, otherUserId, false, undefined),
+        new CreateChatroomCommand(userId, otherUserId, false, undefined, undefined),
       );
 
       if (!createdChatroom) {
@@ -179,6 +201,7 @@ export class MessageResolver {
     @Args('otherUserId', { nullable: true }) otherUserId: string,
     @Args('isGroupChat', { nullable: true }) isGroupChat: boolean,
   @Args('chatroomName', { nullable: true }) chatroomName: string,
+  @Args('avatarUrl', { nullable: true }) avatarUrl: string,
   @Context() context: RequestContext,
   ) {
     const userId = context.req.user?.sub;
@@ -186,7 +209,7 @@ export class MessageResolver {
       throw new UnauthorizedException('Unauthorized');
     }
     const chatroom = await this.commandBus.execute(
-      new CreateChatroomCommand(userId, otherUserId, isGroupChat, chatroomName),
+      new CreateChatroomCommand(userId, otherUserId, isGroupChat, chatroomName, avatarUrl),
     );
     if (!chatroom) throw new NotFoundException('Chatroom could not be created');
     if (otherUserId) {

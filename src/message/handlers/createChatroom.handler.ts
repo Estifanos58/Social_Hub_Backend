@@ -16,7 +16,7 @@ export class CreateChatroomHandler
   constructor(private readonly prismaService: PrismaService) {}
 
   async execute(command: CreateChatroomCommand) {
-    const { userId, otherUserId, isGroupChat, chatroomName } = command;
+  const { userId, otherUserId, isGroupChat, chatroomName, avatarUrl } = command;
 
     if (!userId) {
       throw new BadRequestException('userId is required');
@@ -82,6 +82,7 @@ export class CreateChatroomHandler
           name: chatroomName ?? null,
           isGroup,
           createdById: userId,
+          avatarUrl: avatarUrl ?? null,
           memberships: {
             create: [
               {
