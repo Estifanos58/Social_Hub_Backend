@@ -305,7 +305,7 @@ type Query {
   GetUserChatrooms: GetUserChatroomsResponse!
   GetUsersToFollow(getUsersToFollow: GetUsersToFollow!): GetUsersToFollowDto!
   SearchUsers(searchUsersInput: SearchUsersInput!): SearchUsersResultDto!
-  chatroomDetail(chatroomId: String!): ChatroomDetailDto!
+  chatroomDetail(chatroomId: String, otherUserId: String): ChatroomDetailDto!
   commentReplies(after: String, commentId: String!, first: Int, includeChildren: Boolean, secondLevelLimit: Int): CommentRepliesConnectionDto!
   getPost(postId: String!): GetPostType!
   getPosts(cursor: String!, take: Float!): PaginatedPostsDto!

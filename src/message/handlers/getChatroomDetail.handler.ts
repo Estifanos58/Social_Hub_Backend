@@ -9,17 +9,59 @@ export class GetChatroomDetailHandler implements IQueryHandler<GetChatroomDetail
   constructor(private readonly prismaService: PrismaService) {}
 
   async execute(query: GetChatroomDetailQuery): Promise<ChatroomDetailDto> {
-    const { chatroomId, userId } = query;
-
-    if (!chatroomId) {
-      throw new BadRequestException('chatroomId is required');
-    }
+    const { chatroomId, userId, otherUserId } = query;
 
     if (!userId) {
       throw new BadRequestException('userId is required');
     }
 
+    if (!chatroomId && !otherUserId) {
+      throw new BadRequestException('chatroomId or otherUserId is required');
+    }
+
     try {
+      if (!chatroomId && otherUserId) {
+        const directUser = await this.prismaService.user.findUnique({
+          where: { id: otherUserId },
+        });
+
+        if (!directUser) {
+          throw new NotFoundException('User not found');
+        }
+
+        const [totalFollowers, totalFollowing] = await Promise.all([
+          this.prismaService.follower.count({ where: { followingId: directUser.id } }),
+          this.prismaService.follower.count({ where: { followerId: directUser.id } }),
+        ]);
+
+        const detail: ChatroomDetailDto = {
+          id: directUser.id,
+          isGroup: false,
+          name: directUser.firstname ?? 'Direct chat',
+          avatarUrl: directUser.avatarUrl ?? null,
+          totalMessages: 0,
+          totalPhotos: 0,
+          totalMembers: null,
+          members: null,
+          directUser: {
+            id: directUser.id,
+            firstname: directUser.firstname ?? null,
+            lastname: directUser.lastname ?? null,
+            avatarUrl: directUser.avatarUrl ?? null,
+            bio: directUser.bio ?? null,
+            email: directUser.email,
+            totalFollowers,
+            totalFollowing,
+          },
+        };
+
+        return detail;
+      }
+
+      if (!chatroomId) {
+        throw new BadRequestException('chatroomId is required');
+      }
+
       const chatroom = await this.prismaService.chatroom.findFirst({
         where: {
           id: chatroomId,

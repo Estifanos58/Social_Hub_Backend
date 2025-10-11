@@ -66,7 +66,8 @@ export class MessageResolver {
   @UseGuards(GraphQLAuthGuard)
   @Query(() => ChatroomDetailDto)
   async chatroomDetail(
-    @Args('chatroomId') chatroomId: string,
+    @Args('chatroomId', { nullable: true }) chatroomId: string,
+    @Args('otherUserId', { nullable: true }) otherUserId: string,
     @Context() context: { req: Request },
   ) {
     const userId = context.req.user?.sub;
@@ -75,12 +76,12 @@ export class MessageResolver {
       throw new UnauthorizedException('Unauthorized');
     }
 
-    if (!chatroomId) {
-      throw new BadRequestException('chatroomId is required');
+    if (!chatroomId && !otherUserId) {
+      throw new BadRequestException('Provide chatroomId or otherUserId');
     }
 
     return this.queryBus.execute(
-      new GetChatroomDetailQuery(chatroomId, userId),
+      new GetChatroomDetailQuery(chatroomId ?? null, userId, otherUserId ?? null),
     );
   }
 
