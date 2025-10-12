@@ -357,7 +357,7 @@ type SearchUsersResultDto {
 type Subscription {
   chatroomCreated(otherUserId: String!): MessageDto
   newMessage(chatroomId: String!, userId: String!): MessageDto
-  userAddedToChatroom(chatroomId: String!, otherUserId: String!, userId: String!): ChatroomDto
+  userAddedToChatroom(otherUserId: String!): ChatroomDto
   userStatedTyping(chatroomId: String!, userId: String!): UserDto
   userStoppedTyping(chatroomId: String!, userId: String!): UserDto
 }

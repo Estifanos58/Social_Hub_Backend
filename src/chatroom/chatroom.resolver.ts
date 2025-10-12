@@ -124,14 +124,12 @@ export class ChatroomResolver {
     resolve: (value) => value.chatroom,
   })
   userAddedToChatroom(
-    @Args('userId') userId: string,
     @Args('otherUserId') otherUserId: string,
-  @Args('chatroomId') chatroomId: string,
   @Context() context?: SubscriptionContext,
   ) {
-    if (!userId || !chatroomId || !otherUserId) {
+    if (!otherUserId) {
       throw new BadRequestException(
-        'userId, chatroomId and otherUserId are required',
+        'otherUserId is required',
       );
     }
 
@@ -172,9 +170,6 @@ export class ChatroomResolver {
         addedUserIds.map(async (addedUserId) => {
           await Promise.all([
             pubSub.publish(`userAddedtoChatroom.${addedUserId}`, {
-              chatroom,
-            }),
-            pubSub.publish(`userAddedtoChatRoom.${addedUserId}`, {
               chatroom,
             }),
           ]);
