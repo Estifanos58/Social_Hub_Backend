@@ -6,12 +6,12 @@ import { Request, Response } from 'express';
 import { UserResponse } from './types';
 import { GetCurrentUserQuery } from './query/getCurrentUser.query';
 import { UseGuards } from '@nestjs/common';
-import { GraphQLAuthGuard } from './graphql-auth.guard';
-import { LoginCommand } from './commands/login.command';
 import { VerifiEmailCommand } from './commands/verifyEmail.command';
 import { ForgotPasswordCommand } from './commands/forgotPassword.command';
 import { ResetPasswordCommand } from './commands/resetPassword.command';
 import { UserDto } from 'src/types';
+import { GraphQLAuthGuard } from 'src/common/guards/graphql-auth.guard';
+import { LoginCommand } from './commands/login.command';
 
 
 @Resolver()

@@ -1,7 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import { Query, Resolver, Args, Context, Int } from '@nestjs/graphql';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { GraphQLAuthGuard } from 'src/auth/graphql-auth.guard';
+import { GraphQLAuthGuard } from 'src/common/guards/graphql-auth.guard';
 import { Request } from 'express';
 import { NotificationDto } from 'src/types';
 import { GetNotificationsQuery } from './query/getNotifications.query';

@@ -7,7 +7,7 @@ import { GetPostCommentsQuery } from './query/getPostComments.query';
 import { GetCommentRepliesQuery } from './query/getCommentReplies.query';
 import { PostCommentsConnectionDto, CommentRepliesConnectionDto } from './types/pagination.types';
 import { UseGuards } from "@nestjs/common";
-import { GraphQLAuthGuard } from "src/auth/graphql-auth.guard";
+import { GraphQLAuthGuard } from "src/common/guards/graphql-auth.guard";
 import { CommentDto } from "src/types";
 
 @Resolver()

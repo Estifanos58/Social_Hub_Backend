@@ -16,7 +16,7 @@ import {
 } from '@nestjs/graphql';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { Request } from 'express';
-import { GraphQLAuthGuard } from 'src/auth/graphql-auth.guard';
+import { GraphQLAuthGuard } from 'src/common/guards/graphql-auth.guard';
 import { PrismaService } from 'src/prisma.service';
 import { ChatroomDetailDto, ChatroomDto, MessageDto, UserDto } from 'src/types';
 import { CreateChatroomCommand } from './commands/CreateChatroom.command';

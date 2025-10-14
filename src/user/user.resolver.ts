@@ -2,7 +2,7 @@ import { UseGuards } from "@nestjs/common";
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
 import { Args, Context, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { UserResponse } from "src/auth/types";
-import { GraphQLAuthGuard } from "src/auth/graphql-auth.guard";
+import { GraphQLAuthGuard } from "src/common/guards/graphql-auth.guard";
 import { FollowUserCommand } from "./commands/FollowUserCommand";
 import { Request } from "express";
 import { UnFollowUserCommand } from "./commands/UnFollowUserCommand";
