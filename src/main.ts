@@ -16,8 +16,11 @@ async function bootstrap() {
       'Content-Type',
       'X-Requested-With',
       'apollo-require-preflight',
+      'x-refresh-token',
+      'X-Refresh-Token',
     ],
     methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
+    exposedHeaders: ['x-access-token', 'x-refresh-token'],
   });
   app.use(cookieParser());
 

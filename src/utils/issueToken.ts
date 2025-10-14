@@ -10,7 +10,7 @@ export const issueToken = (
     user: User,
     jwtService: JwtService,
     configService: ConfigService,
-    response: Response,
+    response?: Response,
 ) => {
     const payload = { sub: user.id, email: user.email, firstname: user.firstname };
 
@@ -25,22 +25,24 @@ export const issueToken = (
     });
 
     const isProduction = configService.get<string>("NODE_ENV") === "production";
-    const baseCookieOptions = {
-        httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? "none" as const : "lax" as const,
-        path: "/",
-    };
+    if (response) {
+        const baseCookieOptions = {
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: isProduction ? "none" as const : "lax" as const,
+            path: "/",
+        };
 
-    response.cookie("refreshToken", refreshToken, {
-        ...baseCookieOptions,
-        maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days
-    });
+        response.cookie("refreshToken", refreshToken, {
+            ...baseCookieOptions,
+            maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days
+        });
 
-    response.cookie("accessToken", accessToken, {
-        ...baseCookieOptions,
-        maxAge: 60 * 60 * 1000, // 1 hour
-    });
+        response.cookie("accessToken", accessToken, {
+            ...baseCookieOptions,
+            maxAge: 60 * 60 * 1000, // 1 hour
+        });
+    }
 
-    return { user };
+    return { user, accessToken, refreshToken };
 };
