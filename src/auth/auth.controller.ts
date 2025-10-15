@@ -17,12 +17,30 @@ export class AuthController {
 
   // Step 2: Google callback
   @Get("google/callback")
-  async googleOAuthCallback(@Query("code") code: string, @Res() res: Response) {
+  async googleOAuthCallback(
+    @Query("code") code: string,
+    @Query("error") error: string | undefined,
+    @Res() res: Response,
+  ) {
+    const clientUrl = this.getClientUrl();
+
+    // If provider returned an error (user denied consent, etc.), redirect to frontend with the error
+    if (error) {
+      const redirect = `${clientUrl}/auth?oauthError=${encodeURIComponent(error)}`;
+      return res.redirect(redirect);
+    }
+
+    if (!code) {
+      const redirect = `${clientUrl}/auth?oauthError=${encodeURIComponent('no_code')}`;
+      return res.redirect(redirect);
+    }
+
     try {
       await this.commandBus.execute(new GoogleOAuthCommand(code, res));
     } catch (err) {
       console.error("Google OAuth Callback Error:", err);
-      return res.status(400).json({ message: "OAuth failed" });
+      const redirect = `${clientUrl}/auth?oauthError=${encodeURIComponent('token_exchange_failed')}`;
+      return res.redirect(redirect);
     }
   }
 
@@ -34,9 +52,35 @@ export class AuthController {
   }
 
     @Get("github/callback")
-    async githubAuthCallback(@Query("code") code: string, @Res() res: Response) {
-        return this.commandBus.execute(new GithubOAuthCommand(code, res));
+    async githubAuthCallback(
+      @Query("code") code: string,
+      @Query("error") error: string | undefined,
+      @Res() res: Response,
+    ) {
+      const clientUrl = this.getClientUrl();
+
+      if (error) {
+        const redirect = `${clientUrl}/auth?oauthError=${encodeURIComponent(error)}`;
+        return res.redirect(redirect);
+      }
+
+      if (!code) {
+        const redirect = `${clientUrl}/auth?oauthError=${encodeURIComponent('no_code')}`;
+        return res.redirect(redirect);
+      }
+
+      try {
+        return await this.commandBus.execute(new GithubOAuthCommand(code, res));
+      } catch (err) {
+        console.error('GitHub OAuth Callback Error:', err);
+        const redirect = `${clientUrl}/auth?oauthError=${encodeURIComponent('token_exchange_failed')}`;
+        return res.redirect(redirect);
+      }
     }
+
+  private getClientUrl(): string {
+    return this.commandBus ? (process.env.CLIENT_URL || 'http://localhost:3000') : (process.env.CLIENT_URL || 'http://localhost:3000');
+  }
 
 
 }
