@@ -61,9 +61,15 @@ export class GoogleOAuthHandler implements ICommandHandler<GoogleOAuthCommand> {
       });
     }
 
-    issueToken(user, this.jwtService, this.configService, res);
+  const tokens = issueToken(user, this.jwtService, this.configService, res);
 
-    res.redirect(this.configService.get('CLIENT_URL') || 'http://localhost:3000');
+  // Append tokens to redirect URL so the frontend can pick them up after OAuth
+  const clientUrl = this.configService.get('CLIENT_URL') || 'http://localhost:3000';
+  const url = new URL(clientUrl);
+  if (tokens?.accessToken) url.searchParams.set('accessToken', tokens.accessToken);
+  if (tokens?.refreshToken) url.searchParams.set('refreshToken', tokens.refreshToken);
+
+  res.redirect(url.toString());
     } catch (error) {
       console.log("Error Google OAuth: ", error)
          if(error instanceof HttpException) {
