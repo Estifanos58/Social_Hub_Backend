@@ -65,7 +65,7 @@ export class GoogleOAuthHandler implements ICommandHandler<GoogleOAuthCommand> {
 
   // Append tokens to redirect URL so the frontend can pick them up after OAuth
   const clientUrl = this.configService.get('CLIENT_URL') || 'http://localhost:3000';
-  const url = new URL(clientUrl, '/social-callback');
+  const url = new URL('/auth/social-callback', clientUrl);
   if (tokens?.accessToken) url.searchParams.set('accessToken', tokens.accessToken);
   if (tokens?.refreshToken) url.searchParams.set('refreshToken', tokens.refreshToken);
 

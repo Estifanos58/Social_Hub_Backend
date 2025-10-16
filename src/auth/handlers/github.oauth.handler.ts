@@ -53,7 +53,7 @@ export class GithubOAuthHandler implements ICommandHandler<GithubOAuthCommand> {
       const tokens = issueToken(user, this.jwtService, this.configService, response);
 
       const clientUrl = this.configService.get('CLIENT_URL') || 'http://localhost:3000';
-      const url = new URL(clientUrl, '/social-callback');
+      const url = new URL('/auth/social-callback', clientUrl);
       if (tokens?.accessToken) url.searchParams.set('accessToken', tokens.accessToken);
       if (tokens?.refreshToken) url.searchParams.set('refreshToken', tokens.refreshToken);
 
