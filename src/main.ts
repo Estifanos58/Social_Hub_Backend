@@ -6,8 +6,12 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-    app.enableCors({
-    origin: process.env.CLIENT_URL,
+  const allowedOrigins = [process.env.CLIENT_URL, 'http://localhost:3000'].filter(
+    (origin): origin is string => Boolean(origin),
+  );
+
+  app.enableCors({
+    origin: allowedOrigins,
     credentials: true,
     // all headers that client are allowed to use
     allowedHeaders: [
