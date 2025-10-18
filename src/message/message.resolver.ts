@@ -168,7 +168,7 @@ export class MessageResolver {
       return payload.typingUserId !== variables.userId;
     },
   })
-  userStatedTyping(
+  userStartedTyping(
     @Args('chatroomId') chatroomId: string,
     @Args('userId') userId: string,
     @Context() context?: SubscriptionContext,
