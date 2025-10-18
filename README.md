@@ -2,9 +2,11 @@
 # SocialHub Backend
 
 <p align="center">
-  <img src="https://nestjs.com/img/logo-small.svg" width="100" alt="NestJS Logo" />
+Db Diagram Link:- https://dbdiagram.io/d/68f383782e68d21b41193984
 </p>
-
+----------------------------------
+<img width="1221" height="1276" alt="Social-hub_light" src="https://github.com/user-attachments/assets/3ff5eb19-88fd-481c-a4c5-d4fd0ad78a72" />
+----------------------------------
 ## Overview
 
 **SocialHub Backend** is a robust, scalable, and feature-rich GraphQL API server for a modern social networking platform. Built with [NestJS](https://nestjs.com/) and [Prisma ORM](https://www.prisma.io/), it powers real-time social interactions, messaging, notifications, and user management with a modular, event-driven architecture.
