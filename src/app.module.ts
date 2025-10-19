@@ -11,6 +11,7 @@ import * as cookie from 'cookie';
 import { TokenModule } from './token/token.module';
 import { MailModule } from './mail/mail.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { UserModule } from './user/user.module';
 import { PostModule } from './post/post.module';
 import { CommentModule } from './comment/comment.module';
@@ -18,6 +19,7 @@ import { NotificationModule } from './notification/notification.module';
 import { MessageModule } from './message/message.module';
 import { redisPubSub } from './pubsub';
 import { ChatroomModule } from './chatroom/chatroom.module';
+import { UserDisconnectedEvent } from './user/event';
 
 @Module({
   imports: [
@@ -36,11 +38,12 @@ import { ChatroomModule } from './chatroom/chatroom.module';
     EventEmitterModule.forRoot(),
     GraphQLModule.forRootAsync({
       imports: [ConfigModule, AuthModule, TokenModule],
-      inject: [ConfigService, TokenService],
+      inject: [ConfigService, TokenService, EventEmitter2],
       driver: ApolloDriver,
       useFactory: async (
         configService: ConfigService,
         tokenService: TokenService,
+        eventEmitter: EventEmitter2,
       ) => {
         return {
           autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
@@ -65,7 +68,51 @@ import { ChatroomModule } from './chatroom/chatroom.module';
                 // console.log('USER FROM GRAPHQL-WS :', user)
                 if (!user) throw new Error('Invalid token');
 
-                return { user };
+                const userId = user?.sub ?? user?.id;
+                if (!userId) {
+                  throw new Error('Authenticated user does not include an id');
+                }
+
+                extra.user = user;
+                extra.userId = userId;
+
+                await redisPubSub.publish(`userOnline.${userId}`, {
+                  userOnline: {
+                    userId,
+                    isOnline: true,
+                    lastSeenAt: null,
+                  },
+                });
+
+                return { user, userId };
+              },
+              onDisconnect: async (context) => {
+                const { extra } = context as {
+                  extra: {
+                    user?: { sub?: string; id?: string };
+                    userId?: string;
+                  };
+                };
+
+                const userId = extra?.user?.sub ?? extra?.user?.id ?? extra?.userId;
+                if (!userId) {
+                  return;
+                }
+
+                const disconnectedAt = new Date();
+
+                await redisPubSub.publish(`userDisconnect.${userId}`, {
+                  userDisconnect: {
+                    userId,
+                    isOnline: false,
+                    lastSeenAt: disconnectedAt,
+                  },
+                });
+
+                eventEmitter.emit(
+                  'user.disconnected',
+                  new UserDisconnectedEvent(userId, disconnectedAt),
+                );
               },
             },
           },

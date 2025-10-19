@@ -1,6 +1,6 @@
 import { UseGuards } from "@nestjs/common";
 import { CommandBus, QueryBus } from "@nestjs/cqrs";
-import { Args, Context, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Context, Mutation, Query, Resolver, Subscription } from "@nestjs/graphql";
 import { UserResponse } from "src/auth/types";
 import { GraphQLAuthGuard } from "src/common/guards/graphql-auth.guard";
 import { FollowUserCommand } from "./commands/FollowUserCommand";
@@ -21,6 +21,11 @@ import { GetChatUsersResponse } from "./types/getChatUsers.type";
 import { GetChatUsersQuery } from "./query/GetChatUsers.query";
 import { GetUserChatroomsResponse } from "./types/getUserChatrooms.type";
 import { GetUserChatroomsQuery } from "./query/GetUserChatrooms.query";
+import { RedisPubSub } from "graphql-redis-subscriptions";
+import { redisPubSub } from "src/pubsub";
+import { UserPresenceDto } from "src/types";
+
+type SubscriptionContext = { pubSub?: RedisPubSub };
 
 @Resolver()
 export class UserResolver {
@@ -28,6 +33,10 @@ export class UserResolver {
         private readonly commandBus: CommandBus,
         private readonly queryBus: QueryBus
     ) {}
+
+    private getPubSub(context?: SubscriptionContext) {
+        return context?.pubSub ?? redisPubSub;
+    }
 
     @UseGuards(GraphQLAuthGuard)
     @Mutation(()=> String)
@@ -145,5 +154,27 @@ export class UserResolver {
     ): Promise<GetUserChatroomsResponse> {
         const userId = context.req.user?.sub!;
         return this.queryBus.execute(new GetUserChatroomsQuery(userId));
+    }
+
+    @Subscription(() => UserPresenceDto, {
+        nullable: true,
+        resolve: (value) => value.userOnline,
+    })
+    userOnline(
+        @Args('userId') userId: string,
+        @Context() context?: SubscriptionContext,
+    ) {
+        return this.getPubSub(context).asyncIterableIterator(`userOnline.${userId}`);
+    }
+
+    @Subscription(() => UserPresenceDto, {
+        nullable: true,
+        resolve: (value) => value.userDisconnect,
+    })
+    userDisconnect(
+        @Args('userId') userId: string,
+        @Context() context?: SubscriptionContext,
+    ) {
+        return this.getPubSub(context).asyncIterableIterator(`userDisconnect.${userId}`);
     }
 }

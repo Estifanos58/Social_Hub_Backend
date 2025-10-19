@@ -358,7 +358,9 @@ type Subscription {
   chatroomCreated(otherUserId: String!): MessageDto
   newMessage(chatroomId: String!, userId: String!): MessageDto
   userAddedToChatroom(otherUserId: String!): ChatroomDto
-  userStatedTyping(chatroomId: String!, userId: String!): UserDto
+  userDisconnect(userId: String!): UserPresenceDto
+  userOnline(userId: String!): UserPresenceDto
+  userStartedTyping(chatroomId: String!, userId: String!): UserDto
   userStoppedTyping(chatroomId: String!, userId: String!): UserDto
 }
 
@@ -392,6 +394,12 @@ type UserDto {
   reactions: [ReactionDto!]
   updatedAt: DateTime!
   verified: Boolean!
+}
+
+type UserPresenceDto {
+  isOnline: Boolean!
+  lastSeenAt: DateTime
+  userId: String!
 }
 
 type UserProfileDto {
